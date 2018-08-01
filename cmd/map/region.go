@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"io"
 	"log"
 	"os"
 	"path"
@@ -65,6 +66,26 @@ func fillSquare(img *image.RGBA, x, y int, c color.RGBA, size int) {
 	}
 }
 
+func (r *Region) GetChunk(cx, cz int) *Chunk {
+	idx := ((cx & 31) + (cz&31)*32)
+	if r.sizes[idx] > 0 {
+		pos := int64(r.locations[idx]) // TODO - mult by 4096 - loc is a block, not byte offset
+
+		np, err := r.file.Seek(pos, io.SeekStart)
+		if err != nil {
+			log.Fatal("Error seeking to chunk location", err)
+		}
+
+		if np != pos {
+			log.Fatal("Attempted to seek to %d, but got position %d.\n", pos, np)
+		}
+
+		return &Chunk{}
+	} else {
+		return nil
+	}
+}
+
 func (r *Region) Render(img *image.RGBA, origX, origZ int) {
 	black := color.RGBA{0, 0, 0, 255}
 	brown := color.RGBA{101, 67, 33, 255}
@@ -76,12 +97,10 @@ func (r *Region) Render(img *image.RGBA, origX, origZ int) {
 			// TODO - offset by origX and origZ
 			px := x * 16
 			pz := z * 16
-			idx := ((x & 31) + (z&31)*32)
-			if r.sizes[idx] > 0 {
-				// img.Set(px, pz, brown)
+			chunk := r.GetChunk(x, z)
+			if chunk != nil {
 				fillSquare(img, px, pz, brown, 16)
 			} else {
-				// img.Set(px, pz, black)
 				fillSquare(img, px, pz, black, 16)
 			}
 		}
