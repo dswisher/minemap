@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"image/color"
 	"log"
 	"os"
 	"path"
@@ -55,16 +57,33 @@ func (r *Region) Close() {
 	}
 }
 
-func (r *Region) Print() {
+func fillSquare(img *image.RGBA, x, y int, c color.RGBA, size int) {
+	for i := 0; i < size; i++ {
+		for j := 0; j < size; j++ {
+			img.Set(x+i, y+j, c)
+		}
+	}
+}
+
+func (r *Region) Render(img *image.RGBA, origX, origZ int) {
+	black := color.RGBA{0, 0, 0, 255}
+	brown := color.RGBA{101, 67, 33, 255}
+
+	// TODO - verify orientation - north should be towards the top of the image
+
 	for x := 0; x < 32; x++ {
 		for z := 0; z < 32; z++ {
+			// TODO - offset by origX and origZ
+			px := x * 4
+			pz := z * 4
 			idx := ((x & 31) + (z&31)*32)
 			if r.sizes[idx] > 0 {
-				fmt.Print("X")
+				// img.Set(px, pz, brown)
+				fillSquare(img, px, pz, brown, 4)
 			} else {
-				fmt.Print(".")
+				// img.Set(px, pz, black)
+				fillSquare(img, px, pz, black, 4)
 			}
 		}
-		fmt.Print("\n")
 	}
 }

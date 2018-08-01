@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"image"
+	"image/png"
 	"log"
 	"os"
 	"strconv"
@@ -26,5 +28,22 @@ func main() {
 	r := OpenRegion("../../DATA/save1/region", x, z)
 	defer r.Close()
 
-	r.Print()
+	width := 32 * 4 // For now, use 4 pixels per chunk
+	height := width
+	img := image.NewRGBA(image.Rect(0, 0, width, height))
+
+	fmt.Printf("...rendering region...\n")
+	r.Render(img, 0, 0)
+
+	pngPath := "foo.png"
+	fmt.Printf("...saving PNG to %s...\n", pngPath)
+
+	// outputFile is a File type which satisfies Writer interface
+	pngFile, err := os.Create(pngPath)
+	if err != nil {
+		log.Fatal("Error opening output PNG file", err)
+	}
+	defer pngFile.Close()
+
+	png.Encode(pngFile, img) // NOTE: ignoring errors
 }
