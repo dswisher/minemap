@@ -8,10 +8,11 @@ import (
 )
 
 type Region struct {
-	X       int // regionX
-	Z       int // regionZ
-	file    *os.File
-	rawLocs []byte
+	X         int      // regionX
+	Z         int      // regionZ
+	file      *os.File // keep around, to read chunks
+	locations []int    // offsets to chunk locations
+	sizes     []byte   // sizes of the chunks
 }
 
 func OpenRegion(dir string, x int, z int) *Region {
@@ -23,7 +24,12 @@ func OpenRegion(dir string, x int, z int) *Region {
 }
 
 func (r *Region) Open(fpath string) {
-	// TODO - if the file does not exist, we're done
+	r.locations = make([]int, 1024)
+	r.sizes = make([]byte, 1024)
+
+	if _, err := os.Stat(fpath); os.IsNotExist(err) {
+		return
+	}
 
 	file, err := os.Open(fpath)
 	if err != nil {
@@ -31,10 +37,15 @@ func (r *Region) Open(fpath string) {
 	}
 	r.file = file
 
-	r.rawLocs = make([]byte, 32*32*4)
-	_, err = file.Read(r.rawLocs)
+	rawLocs := make([]byte, 1024*4)
+	_, err = file.Read(rawLocs)
 	if err != nil {
 		log.Fatal("Error reading rawLocs", err)
+	}
+
+	for i := 0; i < 1024; i++ {
+		r.locations[i] = int(rawLocs[i*4]<<16) + int(rawLocs[i*4+1]<<8) + int(rawLocs[i*4+2])
+		r.sizes[i] = rawLocs[i*4+3]
 	}
 }
 
@@ -47,8 +58,8 @@ func (r *Region) Close() {
 func (r *Region) Print() {
 	for x := 0; x < 32; x++ {
 		for z := 0; z < 32; z++ {
-			offset := 4 * ((x & 31) + (z&31)*32)
-			if r.rawLocs[offset+3] > 0 {
+			idx := ((x & 31) + (z&31)*32)
+			if r.sizes[idx] > 0 {
 				fmt.Print("X")
 			} else {
 				fmt.Print(".")
