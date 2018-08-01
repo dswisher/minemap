@@ -1,0 +1,16 @@
+# Ignore all
+*
+
+# Unignore all with extensions
+!*.*
+
+# Unignore all dirs
+!*/
+
+# Ignore some things with extensions
+*.swp
+.DS_Store
+foo.*
+
+# Ignore the data dir
+DATA
