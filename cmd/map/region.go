@@ -74,15 +74,15 @@ func (r *Region) Render(img *image.RGBA, origX, origZ int) {
 	for x := 0; x < 32; x++ {
 		for z := 0; z < 32; z++ {
 			// TODO - offset by origX and origZ
-			px := x * 4
-			pz := z * 4
+			px := x * 16
+			pz := z * 16
 			idx := ((x & 31) + (z&31)*32)
 			if r.sizes[idx] > 0 {
 				// img.Set(px, pz, brown)
-				fillSquare(img, px, pz, brown, 4)
+				fillSquare(img, px, pz, brown, 16)
 			} else {
 				// img.Set(px, pz, black)
-				fillSquare(img, px, pz, black, 4)
+				fillSquare(img, px, pz, black, 16)
 			}
 		}
 	}

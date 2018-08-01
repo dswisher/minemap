@@ -10,8 +10,8 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 3 {
-		fmt.Printf("Usage: %s x z\n", os.Args[0])
+	if len(os.Args) < 4 {
+		fmt.Printf("Usage: %s x z png-file\n", os.Args[0])
 		return
 	}
 
@@ -24,18 +24,19 @@ func main() {
 		log.Fatal("Error parsing z", err)
 	}
 
+	pngPath := os.Args[3]
+
 	fmt.Printf("...loading region x=%d, z=%d...\n", x, z)
 	r := OpenRegion("../../DATA/save1/region", x, z)
 	defer r.Close()
 
-	width := 32 * 4 // For now, use 4 pixels per chunk
-	height := width
+	width := 512
+	height := 512
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 
 	fmt.Printf("...rendering region...\n")
 	r.Render(img, 0, 0)
 
-	pngPath := "foo.png"
 	fmt.Printf("...saving PNG to %s...\n", pngPath)
 
 	// outputFile is a File type which satisfies Writer interface
