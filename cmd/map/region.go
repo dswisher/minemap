@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
+	"compress/zlib"
 	"fmt"
 	"image"
 	"image/color"
 	"io"
+	"io/ioutil"
 	"log"
 	"os"
 	"path"
@@ -99,25 +102,36 @@ func (r *Region) GetChunk(cx, cz int) *Chunk {
 		log.Fatalf("Invalid compression type, chunk=(%d,%d): 0x%x", cx, cz, compressionType)
 	}
 
-	// TODO - this is just here to avoid unused var warning
-	if compressedLength == 0 {
-		log.Fatalf("Invalid compressedLength, chunk=(%d,%d): 0x%x", cx, cz, compressedLength)
+	// Read the zlib compressed bytes
+	compressedData := make([]byte, compressedLength)
+	_, err = r.file.Read(compressedData)
+
+	// Decompress the data
+	bReader := bytes.NewReader(compressedData)
+	zReader, err := zlib.NewReader(bReader)
+	if err != nil {
+		log.Fatalf("Error creating zlib reader, chunk=(%d,%d): %v", cx, cz, err)
 	}
 
-	// TODO - read the zlib compressed bytes
+	chunkBytes, err := ioutil.ReadAll(zReader)
+	if err != nil {
+		log.Fatalf("Error decompressing chunk data, chunk=(%d,%d): %v", cx, cz, err)
+	}
 
-	return &Chunk{}
+	zReader.Close()
+
+	return ParseChunk(cx, cz, chunkBytes)
 }
 
-func (r *Region) Render(img *image.RGBA, origX, origZ int) {
+func (r *Region) Render(img *image.RGBA, offsetX, offsetZ int) {
 	black := color.RGBA{0, 0, 0, 255}
 	brown := color.RGBA{101, 67, 33, 255}
 
-	// TODO - verify orientation - north should be towards the top of the image
+	// TODO - verify orientation - ideally, north should be towards the top of the image
 
 	for x := 0; x < 32; x++ {
 		for z := 0; z < 32; z++ {
-			// TODO - offset by origX and origZ
+			// TODO - offset by offsetX and offsetZ
 			px := x * 16
 			pz := z * 16
 			chunk := r.GetChunk(x, z)
