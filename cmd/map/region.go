@@ -47,8 +47,9 @@ func (r *Region) Open(fpath string) {
 	}
 
 	for i := 0; i < 1024; i++ {
-		r.locations[i] = int(rawLocs[i*4]<<16) + int(rawLocs[i*4+1]<<8) + int(rawLocs[i*4+2])
-		r.sizes[i] = rawLocs[i*4+3]
+		b := i * 4
+		r.locations[i] = int(rawLocs[b])<<16 + int(rawLocs[b+1])<<8 + int(rawLocs[b+2])
+		r.sizes[i] = rawLocs[b+3]
 	}
 }
 
@@ -67,14 +68,14 @@ func fillSquare(img *image.RGBA, x, y int, c color.RGBA, size int) {
 }
 
 func (r *Region) GetChunk(cx, cz int) *Chunk {
-	idx := ((cx & 31) + (cz&31)*32)
+	idx := (cx & 31) + ((cz & 31) * 32)
 
 	if r.sizes[idx] == 0 {
 		return nil
 	}
 
 	// Get the position of the start of the chunk. The locations are block locations, so mult by 4096.
-	pos := int64(r.locations[idx] * 4096)
+	pos := int64(r.locations[idx] * 0x1000)
 
 	np, err := r.file.Seek(pos, io.SeekStart)
 	if err != nil {
@@ -91,20 +92,16 @@ func (r *Region) GetChunk(cx, cz int) *Chunk {
 		log.Fatalf("Error reading chunk rawHeader, chunk=(%d,%d): %v", cx, cz, err)
 	}
 
-	compressedLength := int(rawHeader[0]<<24) + int(rawHeader[1]<<16) + int(rawHeader[2]<<8) + int(rawHeader[3])
+	compressedLength := int(rawHeader[0])<<24 + int(rawHeader[1])<<16 + int(rawHeader[2])<<8 + int(rawHeader[3])
 	compressionType := rawHeader[4]
 
-	if cx == 0 && cz == 13 {
-		fmt.Printf("-> GetChunk(%d,%d) - idx=%d, pos=%d, loc=%d, size=%d, compressedLength=%d\n", cx, cz, idx, pos, r.locations[idx], r.sizes[idx], compressedLength)
-	}
-
 	if compressionType != 2 {
-		log.Fatalf("Invalid compression type, chunk=(%d,%d): %d", cx, cz, compressionType)
+		log.Fatalf("Invalid compression type, chunk=(%d,%d): 0x%x", cx, cz, compressionType)
 	}
 
 	// TODO - this is just here to avoid unused var warning
 	if compressedLength == 0 {
-		log.Fatalf("Invalid compressedLength, chunk=(%d,%d): %d", cx, cz, compressedLength)
+		log.Fatalf("Invalid compressedLength, chunk=(%d,%d): 0x%x", cx, cz, compressedLength)
 	}
 
 	// TODO - read the zlib compressed bytes
