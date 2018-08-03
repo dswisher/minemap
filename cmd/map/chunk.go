@@ -19,7 +19,7 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 	root := nbtag.Parse(chunkBytes, 0)
 
 	if cx == 0 && cz == 0 {
-		fmt.Printf("Root type = %d\n", root.GetType())
+		fmt.Printf("Root, type=%d, name='%s'\n", root.GetType(), root.GetName())
 	}
 
 	/*
@@ -34,7 +34,7 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 	*/
 
 	// TODO - HACK - save a chunk to a file
-	if cx == 16 && cz == 16 {
+	if cx == 0 && cz == 0 {
 		chunkFileName := fmt.Sprintf("chunk-%d-%d.dat", cx, cz)
 		chunkFile, err := os.Create(chunkFileName)
 		if err != nil {
