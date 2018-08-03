@@ -113,12 +113,12 @@ func (r *Region) GetChunk(cx, cz int) *Chunk {
 		log.Fatalf("Error creating zlib reader, chunk=(%d,%d): %v", cx, cz, err)
 	}
 
+	defer zReader.Close()
+
 	chunkBytes, err := ioutil.ReadAll(zReader)
 	if err != nil {
 		log.Fatalf("Error decompressing chunk data, chunk=(%d,%d): %v", cx, cz, err)
 	}
-
-	zReader.Close()
 
 	return ParseChunk(cx, cz, chunkBytes)
 }
