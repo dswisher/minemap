@@ -9,6 +9,7 @@ type NBByte struct {
 
 func parseByteTag(data []byte, pos int) (*NBByte, int) {
 	tag := new(NBByte)
+	tag.startPos = pos - 1
 	tag.kind = NBTypeByte
 
 	tag.name, pos = parseString(data, pos)

@@ -12,6 +12,7 @@ type NBShort struct {
 
 func parseShortTag(data []byte, pos int) (*NBShort, int) {
 	tag := new(NBShort)
+	tag.startPos = pos - 1
 	tag.kind = NBTypeShort
 
 	tag.name, pos = parseString(data, pos)

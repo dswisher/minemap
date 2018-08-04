@@ -9,6 +9,7 @@ type NBString struct {
 
 func parseStringTag(data []byte, pos int) (*NBString, int) {
 	tag := new(NBString)
+	tag.startPos = pos - 1
 	tag.kind = NBTypeString
 
 	tag.name, pos = parseString(data, pos)

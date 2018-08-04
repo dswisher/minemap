@@ -8,6 +8,7 @@ type NBEnd struct {
 
 func parseEndTag(data []byte, pos int) (*NBEnd, int) {
 	tag := new(NBEnd)
+	tag.startPos = pos - 1
 	tag.kind = NBTypeEnd
 	tag.name = ""
 

@@ -9,6 +9,7 @@ type NBCompound struct {
 
 func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
 	tag := new(NBCompound)
+	tag.startPos = pos - 1
 	tag.kind = NBTypeCompound
 
 	tag.name, pos = parseString(data, pos)

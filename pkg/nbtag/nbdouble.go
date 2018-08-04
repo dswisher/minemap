@@ -13,12 +13,13 @@ type NBDouble struct {
 
 func parseDoubleTag(data []byte, pos int) (*NBDouble, int) {
 	tag := new(NBDouble)
+	tag.startPos = pos - 1
 	tag.kind = NBTypeDouble
 
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseDouble(data, pos)
 
-	fmt.Printf("-> NBDouble, name='%s', value='%.4f'\n", tag.name, tag.value)
+	fmt.Printf("-> NBDouble, name='%s', value=%.4f\n", tag.name, tag.value)
 
 	return tag, pos
 }

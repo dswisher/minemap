@@ -12,6 +12,7 @@ type NBInt struct {
 
 func parseIntTag(data []byte, pos int) (*NBInt, int) {
 	tag := new(NBInt)
+	tag.startPos = pos - 1
 	tag.kind = NBTypeInt
 
 	tag.name, pos = parseString(data, pos)

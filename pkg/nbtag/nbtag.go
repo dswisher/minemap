@@ -10,7 +10,9 @@ const (
 	NBTypeShort     = 2
 	NBTypeInt       = 3
 	NBTypeLong      = 4
+	NBTypeFloat     = 5
 	NBTypeDouble    = 6
+	NBTypeByteArray = 7
 	NBTypeString    = 8
 	NBTypeList      = 9
 	NBTypeCompound  = 10
@@ -21,11 +23,13 @@ const (
 type NBTag interface {
 	GetType() byte
 	GetName() string
+	GetStartPos() int
 }
 
 type tagData struct {
-	kind byte
-	name string
+	startPos int
+	kind     byte
+	name     string
 }
 
 func Parse(data []byte, pos int) NBTag {
@@ -37,10 +41,10 @@ func Parse(data []byte, pos int) NBTag {
 func parseTag(data []byte, pos int) (NBTag, int) {
 	var tag NBTag
 
-	t := data[pos]
+	kind := data[pos]
 	pos += 1
 
-	switch t {
+	switch kind {
 	case NBTypeEnd:
 		tag, pos = parseEndTag(data, pos)
 	case NBTypeByte:
@@ -51,29 +55,37 @@ func parseTag(data []byte, pos int) (NBTag, int) {
 		tag, pos = parseIntTag(data, pos)
 	case NBTypeLong:
 		tag, pos = parseLongTag(data, pos)
+	case NBTypeFloat:
+		tag, pos = parseFloatTag(data, pos)
 	case NBTypeDouble:
 		tag, pos = parseDoubleTag(data, pos)
-	case NBTypeCompound:
-		tag, pos = parseCompoundTag(data, pos)
-	case NBTypeList:
-		tag, pos = parseListTag(data, pos)
+	case NBTypeByteArray:
+		tag, pos = parseByteArrayTag(data, pos)
 	case NBTypeString:
 		tag, pos = parseStringTag(data, pos)
+	case NBTypeList:
+		tag, pos = parseListTag(data, pos)
+	case NBTypeCompound:
+		tag, pos = parseCompoundTag(data, pos)
 	case NBTypeIntArray:
 		tag, pos = parseIntArrayTag(data, pos)
 	case NBTypeLongArray:
 		tag, pos = parseLongArrayTag(data, pos)
 	default:
-		log.Fatalf("-> Unhandled NBT tag type %d at pos 0x%x.\n", t, pos-1)
+		log.Fatalf("-> Unhandled NBT tag type %d at pos 0x%x.\n", kind, pos-1)
 	}
 
 	return tag, pos
 }
 
-func (c *tagData) GetType() byte {
-	return c.kind
+func (t *tagData) GetType() byte {
+	return t.kind
 }
 
-func (c *tagData) GetName() string {
-	return c.name
+func (t *tagData) GetName() string {
+	return t.name
+}
+
+func (t *tagData) GetStartPos() int {
+	return t.startPos
 }

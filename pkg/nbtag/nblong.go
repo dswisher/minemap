@@ -12,6 +12,7 @@ type NBLong struct {
 
 func parseLongTag(data []byte, pos int) (*NBLong, int) {
 	tag := new(NBLong)
+	tag.startPos = pos - 1
 	tag.kind = NBTypeLong
 
 	tag.name, pos = parseString(data, pos)
