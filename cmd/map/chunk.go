@@ -13,26 +13,6 @@ type Chunk struct {
 }
 
 func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
-	chunk := Chunk{X: cx, Z: cz}
-
-	// First tag should be compound
-	root := nbtag.Parse(chunkBytes, 0)
-
-	if cx == 0 && cz == 0 {
-		fmt.Printf("Root, type=%d, name='%s'\n", root.GetType(), root.GetName())
-	}
-
-	/*
-		// TODO - HACK - print out a few bytes from an arbitrary chunk
-		if cx == 0 && cz <= 5 && len(chunkBytes) > 10 {
-			fmt.Printf("chunk(%d,%d), bytes: ", cx, cz)
-			for i := 0; i < 20 && i < len(chunkBytes); i++ {
-				fmt.Printf(" %02x", chunkBytes[i])
-			}
-			fmt.Print("\n")
-		}
-	*/
-
 	// TODO - HACK - save a chunk to a file
 	if cx == 0 && cz == 0 {
 		chunkFileName := fmt.Sprintf("chunk-%d-%d.dat", cx, cz)
@@ -45,7 +25,15 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 		fmt.Printf("-> Wrote chunk(%d,%d) bytes to %s.\n", cx, cz, chunkFileName)
 	}
 
-	// TODO - parse the bytes
+	// Create the empty chunk
+	chunk := Chunk{X: cx, Z: cz}
+
+	// First tag should be compound
+	root := nbtag.Parse(chunkBytes, 0)
+
+	if cx == 0 && cz == 0 {
+		fmt.Printf("Root, type=%d, name='%s'\n", root.GetType(), root.GetName())
+	}
 
 	return &chunk
 }
