@@ -3,13 +3,13 @@ package nbtag
 import "fmt"
 
 type NBIntArray struct {
-	kind  byte
-	name  string
+	tagData
 	value []int
 }
 
 func parseIntArrayTag(data []byte, pos int) (*NBIntArray, int) {
-	tag := NBIntArray{kind: NBTypeIntArray}
+	tag := new(NBIntArray)
+	tag.kind = NBTypeIntArray
 
 	tag.name, pos = parseString(data, pos)
 	count, pos := parseInt32(data, pos)
@@ -21,13 +21,5 @@ func parseIntArrayTag(data []byte, pos int) (*NBIntArray, int) {
 
 	fmt.Printf("-> NBIntArray, name='%s', value='%d'\n", tag.name, tag.value)
 
-	return &tag, pos
-}
-
-func (c *NBIntArray) GetType() byte {
-	return c.kind
-}
-
-func (c *NBIntArray) GetName() string {
-	return c.name
+	return tag, pos
 }

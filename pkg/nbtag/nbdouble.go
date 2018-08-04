@@ -1,28 +1,31 @@
 package nbtag
 
-import "fmt"
+import (
+	"encoding/binary"
+	"fmt"
+	"math"
+)
 
 type NBDouble struct {
-	kind  byte
-	name  string
+	tagData
 	value float64
 }
 
 func parseDoubleTag(data []byte, pos int) (*NBDouble, int) {
-	tag := NBDouble{kind: NBTypeDouble}
+	tag := new(NBDouble)
+	tag.kind = NBTypeDouble
 
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseDouble(data, pos)
 
 	fmt.Printf("-> NBDouble, name='%s', value='%.4f'\n", tag.name, tag.value)
 
-	return &tag, pos
+	return tag, pos
 }
 
-func (c *NBDouble) GetType() byte {
-	return c.kind
-}
-
-func (c *NBDouble) GetName() string {
-	return c.name
+func parseDouble(data []byte, pos int) (float64, int) {
+	bits := binary.BigEndian.Uint64(data[pos : pos+8])
+	float := math.Float64frombits(bits)
+	pos += 8
+	return float, pos
 }

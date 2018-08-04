@@ -1,28 +1,30 @@
 package nbtag
 
-import "fmt"
+import (
+	"encoding/binary"
+	"fmt"
+)
 
 type NBInt struct {
-	kind  byte
-	name  string
+	tagData
 	value int
 }
 
 func parseIntTag(data []byte, pos int) (*NBInt, int) {
-	tag := NBInt{kind: NBTypeInt}
+	tag := new(NBInt)
+	tag.kind = NBTypeInt
 
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseInt32(data, pos)
 
 	fmt.Printf("-> NBInt, name='%s', value='%d'\n", tag.name, tag.value)
 
-	return &tag, pos
+	return tag, pos
 }
 
-func (c *NBInt) GetType() byte {
-	return c.kind
-}
+func parseInt32(data []byte, pos int) (int, int) {
+	val := int(binary.BigEndian.Uint32(data[pos : pos+4]))
+	pos += 4
 
-func (c *NBInt) GetName() string {
-	return c.name
+	return val, pos
 }

@@ -3,13 +3,13 @@ package nbtag
 import "fmt"
 
 type NBCompound struct {
-	kind     byte
-	name     string
+	tagData
 	children []NBTag
 }
 
 func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
-	tag := NBCompound{kind: NBTypeCompound}
+	tag := new(NBCompound)
+	tag.kind = NBTypeCompound
 
 	tag.name, pos = parseString(data, pos)
 
@@ -17,7 +17,7 @@ func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
 
 	tag.children, pos = parseCompoundData(data, pos)
 
-	return &tag, pos
+	return tag, pos
 }
 
 func parseCompoundData(data []byte, pos int) ([]NBTag, int) {
@@ -29,12 +29,4 @@ func parseCompoundData(data []byte, pos int) ([]NBTag, int) {
 	}
 
 	return children, pos
-}
-
-func (c *NBCompound) GetType() byte {
-	return c.kind
-}
-
-func (c *NBCompound) GetName() string {
-	return c.name
 }

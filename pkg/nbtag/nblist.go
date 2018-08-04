@@ -6,13 +6,13 @@ import (
 )
 
 type NBList struct {
-	kind byte
-	name string
+	tagData
 	// TODO - what value to use here? It could be any type.
 }
 
 func parseListTag(data []byte, pos int) (*NBList, int) {
-	tag := NBList{kind: NBTypeList}
+	tag := new(NBList)
+	tag.kind = NBTypeList
 
 	startPos := pos
 
@@ -42,13 +42,5 @@ func parseListTag(data []byte, pos int) (*NBList, int) {
 
 	fmt.Printf("-> NBList, name='%s'\n", tag.name)
 
-	return &tag, pos
-}
-
-func (c *NBList) GetType() byte {
-	return c.kind
-}
-
-func (c *NBList) GetName() string {
-	return c.name
+	return tag, pos
 }

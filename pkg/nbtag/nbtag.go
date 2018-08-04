@@ -1,9 +1,7 @@
 package nbtag
 
 import (
-	"encoding/binary"
 	"log"
-	"math"
 )
 
 const (
@@ -23,6 +21,11 @@ const (
 type NBTag interface {
 	GetType() byte
 	GetName() string
+}
+
+type tagData struct {
+	kind byte
+	name string
 }
 
 func Parse(data []byte, pos int) NBTag {
@@ -67,52 +70,10 @@ func parseTag(data []byte, pos int) (NBTag, int) {
 	return tag, pos
 }
 
-func parseString(data []byte, pos int) (string, int) {
-	nameLen, pos := parseInt16(data, pos)
-
-	var name string
-	if nameLen > 0 {
-		name = string(data[pos : pos+nameLen])
-	} else {
-		name = ""
-	}
-
-	pos += nameLen
-
-	return name, pos
+func (c *tagData) GetType() byte {
+	return c.kind
 }
 
-func parseDouble(data []byte, pos int) (float64, int) {
-	bits := binary.BigEndian.Uint64(data[pos : pos+8])
-	float := math.Float64frombits(bits)
-	pos += 8
-	return float, pos
-}
-
-func parseInt64(data []byte, pos int) (int, int) {
-	val := int(binary.BigEndian.Uint64(data[pos : pos+8]))
-	pos += 8
-
-	return val, pos
-}
-
-func parseInt32(data []byte, pos int) (int, int) {
-	val := int(binary.BigEndian.Uint32(data[pos : pos+4]))
-	pos += 4
-
-	return val, pos
-}
-
-func parseInt16(data []byte, pos int) (int, int) {
-	val := int(binary.BigEndian.Uint16(data[pos : pos+2]))
-	pos += 2
-
-	return val, pos
-}
-
-func parseInt8(data []byte, pos int) (int, int) {
-	val := int(data[pos])
-	pos += 1
-
-	return val, pos
+func (c *tagData) GetName() string {
+	return c.name
 }

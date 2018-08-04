@@ -1,28 +1,30 @@
 package nbtag
 
-import "fmt"
+import (
+	"encoding/binary"
+	"fmt"
+)
 
 type NBLong struct {
-	kind  byte
-	name  string
+	tagData
 	value int // TODO - does this need to be int64?
 }
 
 func parseLongTag(data []byte, pos int) (*NBLong, int) {
-	tag := NBLong{kind: NBTypeLong}
+	tag := new(NBLong)
+	tag.kind = NBTypeLong
 
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseInt64(data, pos)
 
 	fmt.Printf("-> NBLong, name='%s', value='%d'\n", tag.name, tag.value)
 
-	return &tag, pos
+	return tag, pos
 }
 
-func (c *NBLong) GetType() byte {
-	return c.kind
-}
+func parseInt64(data []byte, pos int) (int, int) {
+	val := int(binary.BigEndian.Uint64(data[pos : pos+8]))
+	pos += 8
 
-func (c *NBLong) GetName() string {
-	return c.name
+	return val, pos
 }

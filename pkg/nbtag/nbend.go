@@ -3,21 +3,15 @@ package nbtag
 import "fmt"
 
 type NBEnd struct {
-	kind byte
+	tagData
 }
 
 func parseEndTag(data []byte, pos int) (*NBEnd, int) {
-	tag := NBEnd{kind: NBTypeEnd}
+	tag := new(NBEnd)
+	tag.kind = NBTypeEnd
+	tag.name = ""
 
 	fmt.Printf("-> NBEnd\n")
 
-	return &tag, pos
-}
-
-func (c *NBEnd) GetType() byte {
-	return c.kind
-}
-
-func (c *NBEnd) GetName() string {
-	return ""
+	return tag, pos
 }
