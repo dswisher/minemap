@@ -2,7 +2,6 @@ package nbtag
 
 import (
 	"encoding/binary"
-	"fmt"
 	"math"
 )
 
@@ -19,7 +18,20 @@ func parseDoubleTag(data []byte, pos int) (*NBDouble, int) {
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseDouble(data, pos)
 
-	fmt.Printf("-> NBDouble, name='%s', value=%.4f\n", tag.name, tag.value)
+	tagLog("-> NBDouble, name='%s', value=%.4f\n", tag.name, tag.value)
+
+	return tag, pos
+}
+
+func parseDoubleListItem(data []byte, pos int, name string) (*NBDouble, int) {
+	tag := new(NBDouble)
+	tag.startPos = pos
+	tag.kind = NBTypeDouble
+	tag.name = name
+
+	tag.value, pos = parseDouble(data, pos)
+
+	tagLog("-> NBDouble list item, name='%s', value=%.4f\n", tag.name, tag.value)
 
 	return tag, pos
 }

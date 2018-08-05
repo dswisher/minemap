@@ -2,7 +2,6 @@ package nbtag
 
 import (
 	"encoding/binary"
-	"fmt"
 )
 
 type NBShort struct {
@@ -18,7 +17,7 @@ func parseShortTag(data []byte, pos int) (*NBShort, int) {
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseInt16(data, pos)
 
-	fmt.Printf("-> NBShort, name='%s', value='%d'\n", tag.name, tag.value)
+	tagLog("-> NBShort, name='%s', value='%d'\n", tag.name, tag.value)
 
 	return tag, pos
 }

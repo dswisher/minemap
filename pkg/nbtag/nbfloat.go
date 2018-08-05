@@ -2,7 +2,6 @@ package nbtag
 
 import (
 	"encoding/binary"
-	"fmt"
 	"math"
 )
 
@@ -19,7 +18,20 @@ func parseFloatTag(data []byte, pos int) (*NBFloat, int) {
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseFloat(data, pos)
 
-	fmt.Printf("-> NBFloat, name='%s', value=%.4f\n", tag.name, tag.value)
+	tagLog("-> NBFloat, name='%s', value=%.4f\n", tag.name, tag.value)
+
+	return tag, pos
+}
+
+func parseFloatListItem(data []byte, pos int, name string) (*NBFloat, int) {
+	tag := new(NBFloat)
+	tag.startPos = pos
+	tag.kind = NBTypeFloat
+	tag.name = name
+
+	tag.value, pos = parseFloat(data, pos)
+
+	tagLog("-> NBFloat list item, name='%s', value=%.4f\n", tag.name, tag.value)
 
 	return tag, pos
 }

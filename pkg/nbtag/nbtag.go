@@ -78,6 +78,10 @@ func parseTag(data []byte, pos int) (NBTag, int) {
 	return tag, pos
 }
 
+func tagLog(format string, args ...interface{}) {
+	// fmt.Printf(format, args...)
+}
+
 func (t *tagData) GetType() byte {
 	return t.kind
 }

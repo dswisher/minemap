@@ -1,7 +1,5 @@
 package nbtag
 
-import "fmt"
-
 type NBLongArray struct {
 	tagData
 	count int
@@ -21,7 +19,7 @@ func parseLongArrayTag(data []byte, pos int) (*NBLongArray, int) {
 		tag.value[i], pos = parseInt64(data, pos)
 	}
 
-	fmt.Printf("-> NBLongArray, name='%s', count=%d, value=%v\n", tag.name, tag.count, tag.value)
+	tagLog("-> NBLongArray, name='%s', count=%d, value=%v\n", tag.name, tag.count, tag.value)
 
 	return tag, pos
 }

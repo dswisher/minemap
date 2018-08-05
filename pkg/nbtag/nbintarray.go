@@ -1,7 +1,5 @@
 package nbtag
 
-import "fmt"
-
 type NBIntArray struct {
 	tagData
 	count int
@@ -21,7 +19,7 @@ func parseIntArrayTag(data []byte, pos int) (*NBIntArray, int) {
 		tag.value[i], pos = parseInt32(data, pos)
 	}
 
-	fmt.Printf("-> NBIntArray, name='%s', count=%d, value=%v\n", tag.name, tag.count, tag.value)
+	tagLog("-> NBIntArray, name='%s', count=%d, value=%v\n", tag.name, tag.count, tag.value)
 
 	return tag, pos
 }

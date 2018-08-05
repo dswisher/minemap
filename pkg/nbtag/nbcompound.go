@@ -1,7 +1,5 @@
 package nbtag
 
-import "fmt"
-
 type NBCompound struct {
 	tagData
 	children []NBTag
@@ -14,7 +12,20 @@ func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
 
 	tag.name, pos = parseString(data, pos)
 
-	fmt.Printf("-> NBCompound, name='%s'\n", tag.name)
+	tagLog("-> NBCompound, name='%s'\n", tag.name)
+
+	tag.children, pos = parseCompoundData(data, pos)
+
+	return tag, pos
+}
+
+func parseCompoundListItem(data []byte, pos int, name string) (*NBCompound, int) {
+	tag := new(NBCompound)
+	tag.startPos = pos
+	tag.kind = NBTypeCompound
+	tag.name = name
+
+	tagLog("-> NBCompound list item, name='%s'\n", tag.name)
 
 	tag.children, pos = parseCompoundData(data, pos)
 

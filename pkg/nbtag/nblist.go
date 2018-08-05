@@ -1,7 +1,6 @@
 package nbtag
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -9,7 +8,7 @@ type NBList struct {
 	tagData
 	innerType byte
 	count     int
-	// TODO - what value to use here? It could be any type.
+	items     []NBTag
 }
 
 func parseListTag(data []byte, pos int) (*NBList, int) {
@@ -22,11 +21,25 @@ func parseListTag(data []byte, pos int) (*NBList, int) {
 	tag.innerType = byte(it)
 	tag.count, pos = parseInt32(data, pos)
 
-	fmt.Printf("-> NBList, start=0x%x, name='%s', innerType=%d, count=%d\n",
+	tagLog("-> NBList, start=0x%x, name='%s', innerType=%d, count=%d\n",
 		tag.startPos, tag.name, tag.innerType, tag.count)
 
 	if tag.count > 0 {
+		var item NBTag
+
 		switch tag.innerType {
+		case NBTypeFloat:
+			for i := 0; i < tag.count; i++ {
+				item, pos = parseFloatListItem(data, pos, tag.name)
+				tag.items = append(tag.items, item)
+			}
+
+		case NBTypeDouble:
+			for i := 0; i < tag.count; i++ {
+				item, pos = parseDoubleListItem(data, pos, tag.name)
+				tag.items = append(tag.items, item)
+			}
+
 		case NBTypeList:
 			// TODO - for now, just skip over the bytes
 			for i := 0; i < tag.count; i++ {
@@ -38,11 +51,13 @@ func parseListTag(data []byte, pos int) (*NBList, int) {
 				}
 			}
 			pos += tag.count * 5
+
 		case NBTypeCompound:
 			for i := 0; i < tag.count; i++ {
-				// TODO - save the children!
-				_, pos = parseCompoundData(data, pos)
+				item, pos = parseCompoundListItem(data, pos, tag.name)
+				tag.items = append(tag.items, item)
 			}
+
 		default:
 			log.Fatalf("parseListTag not yet implemented for type: count=%d, innerType=%d, pos=0x%x, startPos=0x%x, name='%s'",
 				tag.count, tag.innerType, pos, tag.startPos, tag.name)

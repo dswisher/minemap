@@ -2,7 +2,6 @@ package nbtag
 
 import (
 	"encoding/binary"
-	"fmt"
 )
 
 type NBInt struct {
@@ -18,7 +17,7 @@ func parseIntTag(data []byte, pos int) (*NBInt, int) {
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseInt32(data, pos)
 
-	fmt.Printf("-> NBInt, name='%s', value='%d'\n", tag.name, tag.value)
+	tagLog("-> NBInt, name='%s', value='%d'\n", tag.name, tag.value)
 
 	return tag, pos
 }

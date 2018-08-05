@@ -1,7 +1,5 @@
 package nbtag
 
-import "fmt"
-
 type NBEnd struct {
 	tagData
 }
@@ -12,7 +10,7 @@ func parseEndTag(data []byte, pos int) (*NBEnd, int) {
 	tag.kind = NBTypeEnd
 	tag.name = ""
 
-	fmt.Printf("-> NBEnd\n")
+	tagLog("-> NBEnd\n")
 
 	return tag, pos
 }

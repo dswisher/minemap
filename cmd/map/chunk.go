@@ -13,17 +13,18 @@ type Chunk struct {
 }
 
 func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
-	// TODO - HACK - save a chunk to a file
-	if cx == 0 && cz == 0 {
-		chunkFileName := fmt.Sprintf("chunk-%d-%d.dat", cx, cz)
-		chunkFile, err := os.Create(chunkFileName)
-		if err != nil {
-			log.Fatalf("Error opening chunk dump file '%s': %v", chunkFileName, err)
-		}
-		chunkFile.Write(chunkBytes)
-		chunkFile.Close()
-		fmt.Printf("-> Wrote chunk(%d,%d) bytes to %s.\n", cx, cz, chunkFileName)
+	// TODO - debug info
+	// fmt.Printf("\n\n****** CHUNK %d, %d ******\n\n\n", cx, cz)
+
+	// TODO - HACK - save chunk to a file
+	chunkFileName := fmt.Sprintf("chunk-%d-%d.dat", cx, cz)
+	chunkFile, err := os.Create(chunkFileName)
+	if err != nil {
+		log.Fatalf("Error opening chunk dump file '%s': %v", chunkFileName, err)
 	}
+	chunkFile.Write(chunkBytes)
+	chunkFile.Close()
+	fmt.Printf("-> Wrote chunk(%d,%d) bytes to %s.\n", cx, cz, chunkFileName)
 
 	// Create the empty chunk
 	chunk := Chunk{X: cx, Z: cz}

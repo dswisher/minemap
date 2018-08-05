@@ -1,7 +1,5 @@
 package nbtag
 
-import "fmt"
-
 type NBByte struct {
 	tagData
 	value int
@@ -15,7 +13,7 @@ func parseByteTag(data []byte, pos int) (*NBByte, int) {
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseInt8(data, pos)
 
-	fmt.Printf("-> NBByte, name='%s', value='%d'\n", tag.name, tag.value)
+	tagLog("-> NBByte, name='%s', value='%d'\n", tag.name, tag.value)
 
 	return tag, pos
 }

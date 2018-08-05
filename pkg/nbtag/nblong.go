@@ -2,7 +2,6 @@ package nbtag
 
 import (
 	"encoding/binary"
-	"fmt"
 )
 
 type NBLong struct {
@@ -18,7 +17,7 @@ func parseLongTag(data []byte, pos int) (*NBLong, int) {
 	tag.name, pos = parseString(data, pos)
 	tag.value, pos = parseInt64(data, pos)
 
-	fmt.Printf("-> NBLong, name='%s', value='%d'\n", tag.name, tag.value)
+	tagLog("-> NBLong, name='%s', value='%d'\n", tag.name, tag.value)
 
 	return tag, pos
 }
