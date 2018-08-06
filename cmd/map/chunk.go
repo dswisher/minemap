@@ -36,20 +36,39 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 	// First tag should be compound
 	root, ok := (nbtag.Parse(chunkBytes, 0)).(*nbtag.NBCompound)
 	if !ok {
-		log.Fatalf("Root is not NBCompound!")
+		log.Fatal("Root is not NBCompound!")
 	}
 
 	if cx == 0 && cz == 0 {
 		fmt.Printf("Root, type=%d, name='%s'\n", root.GetType(), root.GetName())
-		// TODO - root.Children should be a map, so we can just grab the 'Level'
-		for _, c := range root.Children {
-			fmt.Printf("   -> child, type=%d, name='%s'\n", c.GetType(), c.GetName())
+
+		l := root.GetChild("Level")
+		if l == nil {
+			log.Fatalf("Chunk (%d, %d) does not contain a level!\n", cx, cz)
 		}
+
+		level, ok := l.(*nbtag.NBCompound)
+
+		if !ok {
+			log.Fatal("Level is not an NBCompound!")
+		}
+
+		dumpTag("xPos", level.GetChild("xPos"))
+		dumpTag("zPos", level.GetChild("zPos"))
+		dumpTag("Biomes", level.GetChild("Biomes"))
 	}
 
 	// TODO - populate map data in the chunk
 
 	return &chunk
+}
+
+func dumpTag(title string, tag nbtag.NBTag) {
+	if tag == nil {
+		fmt.Printf("  -> tag '%s', nil\n", title)
+	} else {
+		fmt.Printf("  -> tag '%s', type=%d, name='%s'\n", title, tag.GetType(), tag.GetName())
+	}
 }
 
 func (c *Chunk) Render(img *image.RGBA, offsetX, offsetZ int) {
