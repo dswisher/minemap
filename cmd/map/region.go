@@ -124,21 +124,27 @@ func (r *Region) GetChunk(cx, cz int) *Chunk {
 }
 
 func (r *Region) Render(img *image.RGBA, offsetX, offsetZ int) {
-	black := color.RGBA{0, 0, 0, 255}
-	brown := color.RGBA{101, 67, 33, 255}
+	/*
+		black := color.RGBA{0, 0, 0, 255}
+		brown := color.RGBA{101, 67, 33, 255}
+	*/
 
 	// TODO - verify orientation - ideally, north should be towards the top of the image
 
+	// TODO - for the moment, only render a subsection of the region, as the parser isn't quite done
+	// This works for my sample region 0,0
 	for x := 0; x < 32; x++ {
 		for z := 0; z < 32; z++ {
-			// TODO - offset by offsetX and offsetZ
-			px := x * 16
-			pz := z * 16
+			if x >= 9 && x <= 14 && z <= 1 {
+				continue
+			}
+			if x >= 15 && z <= 13 {
+				continue
+			}
+
 			chunk := r.GetChunk(x, z)
 			if chunk != nil {
-				fillSquare(img, px, pz, brown, 16)
-			} else {
-				fillSquare(img, px, pz, black, 16)
+				chunk.Render(img, offsetX, offsetZ)
 			}
 		}
 	}

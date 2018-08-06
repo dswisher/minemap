@@ -2,7 +2,8 @@ package nbtag
 
 type NBCompound struct {
 	tagData
-	children []NBTag
+	// TODO - this should be a MAP!
+	Children []NBTag
 }
 
 func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
@@ -14,7 +15,7 @@ func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
 
 	tagLog("-> NBCompound, name='%s'\n", tag.name)
 
-	tag.children, pos = parseCompoundData(data, pos)
+	tag.Children, pos = parseCompoundData(data, pos)
 
 	return tag, pos
 }
@@ -27,7 +28,7 @@ func parseCompoundListItem(data []byte, pos int, name string) (*NBCompound, int)
 
 	tagLog("-> NBCompound list item, name='%s'\n", tag.name)
 
-	tag.children, pos = parseCompoundData(data, pos)
+	tag.Children, pos = parseCompoundData(data, pos)
 
 	return tag, pos
 }
