@@ -6,6 +6,14 @@ type NBByteArray struct {
 	value []byte
 }
 
+func (i *NBByteArray) GetCount() int {
+	return i.count
+}
+
+func (i *NBByteArray) GetValues() []byte {
+	return i.value
+}
+
 func parseByteArrayTag(data []byte, pos int) (*NBByteArray, int) {
 	tag := new(NBByteArray)
 	tag.startPos = pos - 1

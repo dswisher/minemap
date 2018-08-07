@@ -11,6 +11,8 @@ import (
 
 type Chunk struct {
 	X, Z int
+
+	Biomes []byte
 }
 
 func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
@@ -39,27 +41,65 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 		log.Fatal("Root is not NBCompound!")
 	}
 
-	if cx == 0 && cz == 0 {
-		fmt.Printf("Root, type=%d, name='%s'\n", root.GetType(), root.GetName())
-
-		l := root.GetChild("Level")
-		if l == nil {
-			log.Fatalf("Chunk (%d, %d) does not contain a level!\n", cx, cz)
-		}
-
-		level, ok := l.(*nbtag.NBCompound)
-
-		if !ok {
-			log.Fatal("Level is not an NBCompound!")
-		}
-
-		dumpTag("xPos", level.GetChild("xPos"))
-		dumpTag("zPos", level.GetChild("zPos"))
-		dumpTag("Biomes", level.GetChild("Biomes"))
+	l := root.GetChild("Level")
+	if l == nil {
+		log.Fatalf("Chunk (%d, %d) does not contain a level!\n", cx, cz)
 	}
+
+	level, ok := l.(*nbtag.NBCompound)
+	if !ok {
+		log.Fatal("Level is not an NBCompound!")
+	}
+
+	// TODO - more debug fun!
+	/*
+		if cx == 0 && cz == 0 {
+			fmt.Printf("Root, type=%d, name='%s'\n", root.GetType(), root.GetName())
+
+			dumpTag("xPos", level.GetChild("xPos"))
+			dumpTag("zPos", level.GetChild("zPos"))
+			dumpTag("Biomes", level.GetChild("Biomes"))
+
+			if level.ContainsChild("Biomes") {
+				biomes := level.GetChild("Biomes").(*nbtag.NBIntArray)
+				fmt.Printf("  -> Biomes, count=%d\n", biomes.GetCount())
+
+				vals := biomes.GetValues()
+
+				for bx := 0; bx < 16; bx++ {
+					for bz := 0; bz < 16; bz++ {
+						fmt.Printf("%2d ", vals[bz*16+bx])
+					}
+					fmt.Printf("\n")
+				}
+			}
+		}
+	*/
 
 	// TODO - populate map data in the chunk
 
+	// Populate some data into the chunk
+	if level.ContainsChild("Biomes") {
+		chunk.Biomes = make([]byte, 256)
+
+		biomes, ok := level.GetChild("Biomes").(*nbtag.NBIntArray)
+		if ok {
+			vals := biomes.GetValues()
+			for qq := 0; qq < 256; qq++ {
+				chunk.Biomes[qq] = byte(vals[qq])
+			}
+		} else {
+			biomes, ok := level.GetChild("Biomes").(*nbtag.NBByteArray)
+			if ok {
+				vals := biomes.GetValues()
+				for qq := 0; qq < 256; qq++ {
+					chunk.Biomes[qq] = vals[qq]
+				}
+			}
+		}
+	}
+
+	// Return what we've built up
 	return &chunk
 }
 
@@ -72,11 +112,40 @@ func dumpTag(title string, tag nbtag.NBTag) {
 }
 
 func (c *Chunk) Render(img *image.RGBA, offsetX, offsetZ int) {
-	brown := color.RGBA{101, 67, 33, 255}
-
 	px := c.X * 16
 	pz := c.Z * 16
+	var bColor color.RGBA
+	if c.Biomes != nil {
+		for bx := 0; bx < 16; bx++ {
+			for bz := 0; bz < 16; bz++ {
+				bid := c.Biomes[bz*16+bx]
+				switch bid {
+				case 0: // Ocean
+					bColor = color.RGBA{0x00, 0x00, 0x70, 255}
+				case 1: // Plains
+					bColor = color.RGBA{0x8D, 0xB3, 0x60, 255}
+				case 3: // Extreme Hills
+					bColor = color.RGBA{0x60, 0x60, 0x60, 255}
+				case 4: // Forest
+					bColor = color.RGBA{0x05, 0x66, 0x21, 255}
+				case 5: // Taiga
+					bColor = color.RGBA{0x0B, 0x66, 0x59, 255}
+				case 7: // River
+					bColor = color.RGBA{0x00, 0x00, 0xFF, 255}
+				case 18: // ForestHills
+					bColor = color.RGBA{0x22, 0x55, 0x1C, 255}
+				case 19: // TaigaHills
+					bColor = color.RGBA{0x16, 0x39, 0x33, 255}
+				case 34: // Wooded Mountains (1.12, Extreme Hills with Trees)
+					bColor = color.RGBA{0x50, 0x70, 0x50, 255}
+				default:
+					log.Fatalf("Pixel color for biome id=%d not coded; chunk=(%d, %d)", bid, c.X, c.Z)
+				}
 
-	// TODO
-	fillSquare(img, px, pz, brown, 16)
+				img.Set(px+bx, pz+bz, bColor)
+			}
+		}
+	} else {
+		fillSquare(img, px, pz, color.RGBA{101, 67, 33, 255}, 16)
+	}
 }

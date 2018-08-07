@@ -131,6 +131,9 @@ func (r *Region) Render(img *image.RGBA, offsetX, offsetZ int) {
 
 	// TODO - verify orientation - ideally, north should be towards the top of the image
 
+	loadedChunks := 0
+	nilChunks := 0
+
 	// TODO - for the moment, only render a subsection of the region, as the parser isn't quite done
 	// This works for my sample region 0,0
 	for x := 0; x < 32; x++ {
@@ -145,7 +148,12 @@ func (r *Region) Render(img *image.RGBA, offsetX, offsetZ int) {
 			chunk := r.GetChunk(x, z)
 			if chunk != nil {
 				chunk.Render(img, offsetX, offsetZ)
+				loadedChunks += 1
+			} else {
+				nilChunks += 1
 			}
 		}
 	}
+
+	fmt.Printf("-> Rendered region, loadedChunks=%d, nilChunks=%d\n", loadedChunks, nilChunks)
 }

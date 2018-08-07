@@ -15,6 +15,11 @@ func (c *NBCompound) AddChild(child NBTag) {
 	c.children[child.GetName()] = child
 }
 
+func (c *NBCompound) ContainsChild(name string) bool {
+	_, found := c.children[name]
+	return found
+}
+
 func (c *NBCompound) GetChild(name string) NBTag {
 	child, found := c.children[name]
 
