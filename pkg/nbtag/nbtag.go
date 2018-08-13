@@ -59,10 +59,20 @@ func parseTag(reader NBReader) (NBTag, error) {
 	var tag NBTag
 
 	switch kind {
+	case NBTypeEnd:
+		tag = newEndTag()
+	case NBTypeInt:
+		tag = newIntTag()
+	case NBTypeLong:
+		tag = newLongTag()
 	case NBTypeString:
 		tag = newStringTag()
 	case NBTypeCompound:
 		tag = newCompoundTag()
+	case NBTypeIntArray:
+		tag = newIntArrayTag()
+	case NBTypeLongArray:
+		tag = newLongArrayTag()
 	default:
 		return nil, newErrorf(reader, "parseTag: %s, pos 0x%X: unhandled NBT tag type %d", reader.Source(), reader.Pos()-1, kind)
 	}

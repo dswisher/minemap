@@ -1,6 +1,8 @@
 package nbtag
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type NBCompound struct {
 	tagData
@@ -57,8 +59,9 @@ func (tag *NBCompound) Parse(reader NBReader) error {
 // Parse the data for a compound.
 func (tag *NBCompound) parseData(reader NBReader) error {
 	var child NBTag
+	var err error
 	for ok := true; ok; ok = (child.GetType() != NBTypeEnd) {
-		child, err := parseTag(reader)
+		child, err = parseTag(reader)
 		if err != nil {
 			return err
 		}

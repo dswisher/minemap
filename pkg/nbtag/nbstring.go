@@ -23,9 +23,12 @@ func (tag *NBString) Parse(reader NBReader) error {
 		return err
 	}
 
-	// TODO - implement me - parse the data (the string itself)
+	tag.value, err = reader.ReadString()
+	if err != nil {
+		return err
+	}
 
-	return newErrorf(reader, "NBString: Parse is not yet implemented")
+	return nil
 }
 
 func (tag *NBString) String() string {

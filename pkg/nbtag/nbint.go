@@ -9,6 +9,27 @@ type NBInt struct {
 	value int
 }
 
+func newIntTag() *NBInt {
+	tag := new(NBInt)
+	tag.kind = NBTypeInt
+
+	return tag
+}
+
+// Parse an int tag, including the name.
+// The current position should be the byte following the tag type byte.
+func (tag *NBInt) Parse(reader NBReader) error {
+	var err error
+	tag.name, err = reader.ReadString()
+	if err != nil {
+		return err
+	}
+
+	tag.value, err = reader.ReadInt32()
+
+	return err
+}
+
 func parseIntTag(data []byte, pos int) (*NBInt, int) {
 	tag := new(NBInt)
 	tag.startPos = pos - 1

@@ -14,6 +14,8 @@ type NBReader interface {
 
 	ReadByte() (byte, error)
 	ReadInt16() (int, error)
+	ReadInt32() (int, error)
+	ReadInt64() (int, error)
 	ReadString() (string, error)
 
 	PushContext(tag NBTag)
@@ -43,6 +45,18 @@ func (r *readerData) ReadByte() (byte, error) {
 func (r *readerData) ReadInt16() (int, error) {
 	val := int(binary.BigEndian.Uint16(r.data[r.pos : r.pos+2]))
 	r.pos += 2
+	return val, nil
+}
+
+func (r *readerData) ReadInt32() (int, error) {
+	val := int(binary.BigEndian.Uint32(r.data[r.pos : r.pos+4]))
+	r.pos += 4
+	return val, nil
+}
+
+func (r *readerData) ReadInt64() (int, error) {
+	val := int(binary.BigEndian.Uint64(r.data[r.pos : r.pos+8]))
+	r.pos += 8
 	return val, nil
 }
 
