@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"os"
 
 	"github.com/dswisher/minemap/pkg/nbtag"
 )
@@ -35,21 +36,42 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 	// Create the empty chunk
 	chunk := Chunk{X: cx, Z: cz}
 
-	// First tag should be compound
-	root, ok := (nbtag.Parse(chunkBytes, 0)).(*nbtag.NBCompound)
-	if !ok {
-		log.Fatal("Root is not NBCompound!")
+	// Parse the named-binary format.
+	// TODO - this is a new version of parsing that will replace the nbTag.Parse method, used below.
+	//        the new version uses a byte reader, so wrap the bytes in one...
+	reader := nbtag.NewReader(chunkBytes, fmt.Sprintf("chunk (%d,%d)", cx, cz))
+	topTag, err := nbtag.Parse(reader)
+	if err != nil {
+		// TODO - propagate the error upward; for now, go boom
+		log.Fatal(err)
 	}
 
-	l := root.GetChild("Level")
-	if l == nil {
-		log.Fatalf("Chunk (%d, %d) does not contain a level!\n", cx, cz)
+	if topTag == nil {
+		log.Fatalf("topTag is nil!")
 	}
 
-	level, ok := l.(*nbtag.NBCompound)
-	if !ok {
-		log.Fatal("Level is not an NBCompound!")
+	if cx == 0 && cz == 0 {
+		topTag.Dump(os.Stdout)
 	}
+
+	// TODO - rip out this old parser code (once the new parser is done).
+	/*
+		// First tag should be compound
+		root, ok := (nbtag.ParseOld(chunkBytes, 0)).(*nbtag.NBCompound)
+		if !ok {
+			log.Fatal("Root is not NBCompound!")
+		}
+
+		l := root.GetChild("Level")
+		if l == nil {
+			log.Fatalf("Chunk (%d, %d) does not contain a level!\n", cx, cz)
+		}
+
+		level, ok := l.(*nbtag.NBCompound)
+		if !ok {
+			log.Fatal("Level is not an NBCompound!")
+		}
+	*/
 
 	// TODO - more debug fun!
 	/*
@@ -78,26 +100,28 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 
 	// TODO - populate map data in the chunk
 
-	// Populate some data into the chunk
-	if level.ContainsChild("Biomes") {
-		chunk.Biomes = make([]byte, 256)
+	/*
+		// Populate some data into the chunk
+		if level.ContainsChild("Biomes") {
+			chunk.Biomes = make([]byte, 256)
 
-		biomes, ok := level.GetChild("Biomes").(*nbtag.NBIntArray)
-		if ok {
-			vals := biomes.GetValues()
-			for qq := 0; qq < 256; qq++ {
-				chunk.Biomes[qq] = byte(vals[qq])
-			}
-		} else {
-			biomes, ok := level.GetChild("Biomes").(*nbtag.NBByteArray)
+			biomes, ok := level.GetChild("Biomes").(*nbtag.NBIntArray)
 			if ok {
 				vals := biomes.GetValues()
 				for qq := 0; qq < 256; qq++ {
-					chunk.Biomes[qq] = vals[qq]
+					chunk.Biomes[qq] = byte(vals[qq])
+				}
+			} else {
+				biomes, ok := level.GetChild("Biomes").(*nbtag.NBByteArray)
+				if ok {
+					vals := biomes.GetValues()
+					for qq := 0; qq < 256; qq++ {
+						chunk.Biomes[qq] = vals[qq]
+					}
 				}
 			}
 		}
-	}
+	*/
 
 	// Return what we've built up
 	return &chunk

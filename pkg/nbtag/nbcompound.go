@@ -39,6 +39,30 @@ func newCompound() *NBCompound {
 	return tag
 }
 
+// Parse a compound tag, including the name.
+func (tag *NBCompound) Parse(reader NBReader) error {
+	var err error
+	tag.name, err = reader.ReadString()
+	if err != nil {
+		return err
+	}
+
+	return tag.parseData(reader)
+}
+
+func (tag *NBCompound) parseData(reader NBReader) error {
+	var child NBTag
+	for ok := true; ok; ok = (child.GetType() != NBTypeEnd) {
+		child, err := parseTag(reader)
+		if err != nil {
+			return err
+		}
+		tag.AddChild(child)
+	}
+
+	return nil
+}
+
 func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
 	tag := newCompound()
 	tag.startPos = pos - 1
@@ -72,7 +96,7 @@ func parseCompoundData(data []byte, pos int) ([]NBTag, int) {
 	var children []NBTag
 	var child NBTag
 	for ok := true; ok; ok = (child.GetType() != NBTypeEnd) {
-		child, pos = parseTag(data, pos)
+		child, pos = parseTagOld(data, pos)
 		children = append(children, child)
 	}
 

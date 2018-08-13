@@ -138,12 +138,14 @@ func (r *Region) Render(img *image.RGBA, offsetX, offsetZ int) {
 	// This works for my sample region 0,0
 	for x := 0; x < 32; x++ {
 		for z := 0; z < 32; z++ {
-			if x >= 9 && x <= 14 && z <= 1 {
-				continue
-			}
-			if x >= 15 && z <= 13 {
-				continue
-			}
+			/*
+				if x >= 9 && x <= 14 && z <= 1 {
+					continue
+				}
+				if x >= 15 && z <= 13 {
+					continue
+				}
+			*/
 
 			chunk := r.GetChunk(x, z)
 			if chunk != nil {
