@@ -3,26 +3,29 @@ package nbtag
 import (
 	"encoding/binary"
 	"fmt"
+	"log"
 	"strings"
 )
 
 type NBReader interface {
 	Source() string
-	LastPos() int
+	Pos() int
 	Context() []string
 
 	ReadByte() (byte, error)
 	ReadInt16() (int, error)
 	ReadString() (string, error)
 
-	// TODO - add the ability to push and pop context info (tags)
+	PushContext(tag NBTag)
+	PopContext()
 }
 
 type readerData struct {
-	pos     int    // current position within the slice
-	data    []byte // the underlying data
-	source  string // the origin of these bytes (for diagnostic purposes)
-	lastPos int    // the position prior to the last read (for diagnostic purposes)
+	pos    int    // current position within the slice
+	data   []byte // the underlying data
+	source string // the origin of these bytes (for diagnostic purposes)
+
+	contextStack []NBTag // Stack of tags being parsed
 }
 
 func NewReader(data []byte, source string) NBReader {
@@ -33,14 +36,12 @@ func NewReader(data []byte, source string) NBReader {
 
 func (r *readerData) ReadByte() (byte, error) {
 	b := r.data[r.pos]
-	r.lastPos = r.pos
 	r.pos += 1
 	return b, nil
 }
 
 func (r *readerData) ReadInt16() (int, error) {
 	val := int(binary.BigEndian.Uint16(r.data[r.pos : r.pos+2]))
-	r.lastPos = r.pos
 	r.pos += 2
 	return val, nil
 }
@@ -58,7 +59,6 @@ func (r *readerData) ReadString() (string, error) {
 		name = ""
 	}
 
-	// r.lastPos not updated here, as ReadInt16 already set it
 	r.pos += nameLen
 
 	return name, nil
@@ -68,26 +68,72 @@ func (r *readerData) Source() string {
 	return r.source
 }
 
-func (r *readerData) LastPos() int {
-	return r.lastPos
+func (r *readerData) Pos() int {
+	return r.pos
+}
+
+func (r *readerData) PushContext(tag NBTag) {
+	r.contextStack = append(r.contextStack, tag)
+}
+
+func (r *readerData) PopContext() {
+	if len(r.contextStack) == 0 {
+		log.Fatal("Context stack underflow.")
+	}
+
+	r.contextStack = r.contextStack[:len(r.contextStack)-1]
 }
 
 func (r *readerData) Context() []string {
 	lines := make([]string, 0)
 
-	// TODO - include context info pushed into the reader
+	for depth, tag := range r.contextStack {
+		lines = append(lines, strings.Repeat(" ", depth*3)+tag.String())
+	}
 
 	// Add the recent bytes
-	// TODO - also include the ASCII representation, on the next line
-	bytes := r.data[r.lastPos : r.lastPos+20]
-	var b strings.Builder
-	for i := 0; i < len(bytes); i++ {
-		if i > 0 {
+	var pos int
+	if len(r.contextStack) > 0 {
+		pos = r.contextStack[len(r.contextStack)-1].GetStartPos()
+	} else {
+		pos = r.pos - 2 // go back a little for context
+	}
+
+	const lineLen = 20
+	var a, b strings.Builder
+	for i := 0; i < 40; i++ {
+		if (i%lineLen) == 0 && i > 0 {
+			lines = append(lines, b.String())
+			lines = append(lines, a.String())
+			a.Reset()
+			b.Reset()
+		}
+
+		if (i % lineLen) == 0 {
+			fmt.Fprintf(&b, "%04X:", pos+i)
+			fmt.Fprint(&a, "     ")
+		}
+
+		if pos+i == r.pos {
+			fmt.Fprint(&b, "[")
+		} else if pos+i == r.pos+1 {
+			fmt.Fprint(&b, "]")
+		} else {
 			fmt.Fprint(&b, " ")
 		}
-		fmt.Fprintf(&b, "%02X", bytes[i])
+
+		val := r.data[pos+i]
+		if val > 32 {
+			fmt.Fprintf(&a, "  %c", val)
+		} else {
+			fmt.Fprint(&a, "  .")
+		}
+
+		fmt.Fprintf(&b, "%02X", val)
 	}
+
 	lines = append(lines, b.String())
+	lines = append(lines, a.String())
 
 	return lines
 }

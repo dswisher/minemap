@@ -23,9 +23,12 @@ const (
 )
 
 type NBTag interface {
+	fmt.Stringer
+
 	GetType() byte    // TODO - change to Type()
 	GetName() string  // TODO - change to Name()
 	GetStartPos() int // TODO - change to StartPos()
+	SetStartPos(pos int)
 
 	Parse(reader NBReader) error
 
@@ -50,22 +53,28 @@ func Parse(reader NBReader) (NBTag, error) {
 func parseTag(reader NBReader) (NBTag, error) {
 	kind, err := reader.ReadByte()
 	if err != nil {
-		return nil, newErrorf(reader, "parseTag: %s, pos 0x%X: %s", reader.Source(), reader.LastPos(), err)
+		return nil, err
 	}
 
 	var tag NBTag
 
 	switch kind {
+	case NBTypeString:
+		tag = newStringTag()
 	case NBTypeCompound:
-		tag = newCompound()
+		tag = newCompoundTag()
 	default:
-		return nil, newErrorf(reader, "parseTag: %s, pos 0x%X: unhandled NBT tag type %d", reader.Source(), reader.LastPos(), kind)
+		return nil, newErrorf(reader, "parseTag: %s, pos 0x%X: unhandled NBT tag type %d", reader.Source(), reader.Pos()-1, kind)
 	}
 
+	reader.PushContext(tag)
+	tag.SetStartPos(reader.Pos() - 1)
 	err = tag.Parse(reader)
 	if err != nil {
 		return nil, err
 	}
+
+	reader.PopContext()
 
 	return tag, nil
 }
@@ -82,12 +91,20 @@ func (t *tagData) GetStartPos() int {
 	return t.startPos
 }
 
+func (t *tagData) SetStartPos(pos int) {
+	t.startPos = pos
+}
+
 func (t *tagData) Dump(w io.Writer) {
 	fmt.Fprintf(w, "Dump is not yet implemented!\n")
 }
 
 func (t *tagData) Parse(reader NBReader) error {
-	return fmt.Errorf("Parse is not yet implemented for kind %d.", t.kind)
+	return newErrorf(reader, "Parse is not yet implemented for kind %d.", t.kind)
+}
+
+func (t *tagData) String() string {
+	return fmt.Sprintf("(NBTag) - type=%d", t.kind)
 }
 
 // - - - - OLD CODE BELOW, due to be deprecated

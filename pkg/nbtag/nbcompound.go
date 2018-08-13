@@ -1,10 +1,13 @@
 package nbtag
 
+import "fmt"
+
 type NBCompound struct {
 	tagData
 	children map[string]NBTag
 }
 
+// TODO - is this still used?
 func (c *NBCompound) AddChildren(children []NBTag) {
 	for _, child := range children {
 		c.AddChild(child)
@@ -31,7 +34,7 @@ func (c *NBCompound) GetChild(name string) NBTag {
 	return child
 }
 
-func newCompound() *NBCompound {
+func newCompoundTag() *NBCompound {
 	tag := new(NBCompound)
 	tag.kind = NBTypeCompound
 	tag.children = make(map[string]NBTag)
@@ -40,6 +43,7 @@ func newCompound() *NBCompound {
 }
 
 // Parse a compound tag, including the name.
+// The current position should be the byte following the tag type byte.
 func (tag *NBCompound) Parse(reader NBReader) error {
 	var err error
 	tag.name, err = reader.ReadString()
@@ -50,6 +54,7 @@ func (tag *NBCompound) Parse(reader NBReader) error {
 	return tag.parseData(reader)
 }
 
+// Parse the data for a compound.
 func (tag *NBCompound) parseData(reader NBReader) error {
 	var child NBTag
 	for ok := true; ok; ok = (child.GetType() != NBTypeEnd) {
@@ -63,8 +68,13 @@ func (tag *NBCompound) parseData(reader NBReader) error {
 	return nil
 }
 
+func (tag *NBCompound) String() string {
+	return fmt.Sprintf("NBCompound: startPos=0x%04X, len(children)=%d, name='%s'", tag.startPos, len(tag.children), tag.name)
+}
+
+// TODO - DELETEME
 func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
-	tag := newCompound()
+	tag := newCompoundTag()
 	tag.startPos = pos - 1
 
 	tag.name, pos = parseString(data, pos)
@@ -79,7 +89,7 @@ func parseCompoundTag(data []byte, pos int) (*NBCompound, int) {
 }
 
 func parseCompoundListItem(data []byte, pos int, name string) (*NBCompound, int) {
-	tag := newCompound()
+	tag := newCompoundTag()
 	tag.startPos = pos
 	tag.name = name
 
