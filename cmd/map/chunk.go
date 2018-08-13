@@ -43,7 +43,14 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 	topTag, err := nbtag.Parse(reader)
 	if err != nil {
 		// TODO - propagate the error upward; for now, go boom
-		log.Fatal(err)
+		log.Print(err)
+		e, ok := err.(nbtag.NBError)
+		if ok {
+			for _, line := range e.Context {
+				log.Printf("   %s", line)
+			}
+		}
+		os.Exit(1)
 	}
 
 	if topTag == nil {

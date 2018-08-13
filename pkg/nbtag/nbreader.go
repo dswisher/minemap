@@ -2,15 +2,20 @@ package nbtag
 
 import (
 	"encoding/binary"
+	"fmt"
+	"strings"
 )
 
 type NBReader interface {
 	Source() string
 	LastPos() int
+	Context() []string
 
 	ReadByte() (byte, error)
 	ReadInt16() (int, error)
 	ReadString() (string, error)
+
+	// TODO - add the ability to push and pop context info (tags)
 }
 
 type readerData struct {
@@ -65,4 +70,24 @@ func (r *readerData) Source() string {
 
 func (r *readerData) LastPos() int {
 	return r.lastPos
+}
+
+func (r *readerData) Context() []string {
+	lines := make([]string, 0)
+
+	// TODO - include context info pushed into the reader
+
+	// Add the recent bytes
+	// TODO - also include the ASCII representation, on the next line
+	bytes := r.data[r.lastPos : r.lastPos+20]
+	var b strings.Builder
+	for i := 0; i < len(bytes); i++ {
+		if i > 0 {
+			fmt.Fprint(&b, " ")
+		}
+		fmt.Fprintf(&b, "%02X", bytes[i])
+	}
+	lines = append(lines, b.String())
+
+	return lines
 }

@@ -50,7 +50,7 @@ func Parse(reader NBReader) (NBTag, error) {
 func parseTag(reader NBReader) (NBTag, error) {
 	kind, err := reader.ReadByte()
 	if err != nil {
-		return nil, fmt.Errorf("parseTag: %s, pos 0x%X: %s", reader.Source(), reader.LastPos(), err)
+		return nil, newErrorf(reader, "parseTag: %s, pos 0x%X: %s", reader.Source(), reader.LastPos(), err)
 	}
 
 	var tag NBTag
@@ -59,7 +59,7 @@ func parseTag(reader NBReader) (NBTag, error) {
 	case NBTypeCompound:
 		tag = newCompound()
 	default:
-		return nil, fmt.Errorf("parseTag: %s, pos 0x%X: unhandled NBT tag type %d", reader.Source(), reader.LastPos(), kind)
+		return nil, newErrorf(reader, "parseTag: %s, pos 0x%X: unhandled NBT tag type %d", reader.Source(), reader.LastPos(), kind)
 	}
 
 	err = tag.Parse(reader)
