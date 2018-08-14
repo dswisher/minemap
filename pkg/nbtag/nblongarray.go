@@ -1,5 +1,7 @@
 package nbtag
 
+import "fmt"
+
 type NBLongArray struct {
 	tagData
 	count int
@@ -38,6 +40,10 @@ func (tag *NBLongArray) Parse(reader NBReader) error {
 	}
 
 	return err
+}
+
+func (tag *NBLongArray) String() string {
+	return fmt.Sprintf("NBLongArray: startPos=0x%04X, count=%d, name='%s'", tag.startPos, tag.count, tag.name)
 }
 
 func parseLongArrayTag(data []byte, pos int) (*NBLongArray, int) {

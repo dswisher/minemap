@@ -31,6 +31,7 @@ type NBTag interface {
 	SetStartPos(pos int)
 
 	Parse(reader NBReader) error
+	parseData(reader NBReader) error
 
 	Dump(w io.Writer)
 }
@@ -48,6 +49,39 @@ func Parse(reader NBReader) (NBTag, error) {
 	return parseTag(reader)
 }
 
+func newTag(reader NBReader, kind byte) (NBTag, error) {
+	var tag NBTag
+
+	switch kind {
+	case NBTypeEnd:
+		tag = newEndTag()
+	case NBTypeByte:
+		tag = newByteTag()
+	// TODO - short
+	case NBTypeInt:
+		tag = newIntTag()
+	case NBTypeLong:
+		tag = newLongTag()
+	// TODO - float
+	// TODO - double
+	// TODO - byte array
+	case NBTypeString:
+		tag = newStringTag()
+	case NBTypeList:
+		tag = newListTag()
+	case NBTypeCompound:
+		tag = newCompoundTag()
+	case NBTypeIntArray:
+		tag = newIntArrayTag()
+	case NBTypeLongArray:
+		tag = newLongArrayTag()
+	default:
+		return nil, newErrorf(reader, "Unhandled tag kind, %d, in newTag.", kind)
+	}
+
+	return tag, nil
+}
+
 // The internal parse method that does all the real work. It is called
 // internally when parsing things like an compound tag.
 func parseTag(reader NBReader) (NBTag, error) {
@@ -56,25 +90,9 @@ func parseTag(reader NBReader) (NBTag, error) {
 		return nil, err
 	}
 
-	var tag NBTag
-
-	switch kind {
-	case NBTypeEnd:
-		tag = newEndTag()
-	case NBTypeInt:
-		tag = newIntTag()
-	case NBTypeLong:
-		tag = newLongTag()
-	case NBTypeString:
-		tag = newStringTag()
-	case NBTypeCompound:
-		tag = newCompoundTag()
-	case NBTypeIntArray:
-		tag = newIntArrayTag()
-	case NBTypeLongArray:
-		tag = newLongArrayTag()
-	default:
-		return nil, newErrorf(reader, "parseTag: %s, pos 0x%X: unhandled NBT tag type %d", reader.Source(), reader.Pos()-1, kind)
+	tag, err := newTag(reader, kind)
+	if err != nil {
+		return nil, err
 	}
 
 	reader.PushContext(tag)
@@ -111,6 +129,10 @@ func (t *tagData) Dump(w io.Writer) {
 
 func (t *tagData) Parse(reader NBReader) error {
 	return newErrorf(reader, "Parse is not yet implemented for kind %d.", t.kind)
+}
+
+func (t *tagData) parseData(reader NBReader) error {
+	return newErrorf(reader, "parseData is not yet implemented for kind %d.", t.kind)
 }
 
 func (t *tagData) String() string {

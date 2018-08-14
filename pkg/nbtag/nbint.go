@@ -2,6 +2,7 @@ package nbtag
 
 import (
 	"encoding/binary"
+	"fmt"
 )
 
 type NBInt struct {
@@ -28,6 +29,10 @@ func (tag *NBInt) Parse(reader NBReader) error {
 	tag.value, err = reader.ReadInt32()
 
 	return err
+}
+
+func (tag *NBInt) String() string {
+	return fmt.Sprintf("NBInt: startPos=0x%04X, val=%d, name='%s'", tag.startPos, tag.value, tag.name)
 }
 
 func parseIntTag(data []byte, pos int) (*NBInt, int) {

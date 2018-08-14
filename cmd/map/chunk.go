@@ -16,22 +16,21 @@ type Chunk struct {
 	Biomes []byte
 }
 
+func dumpChunk(cx, cz int, chunkBytes []byte) {
+	chunkFileName := fmt.Sprintf("chunk-%d-%d.dat", cx, cz)
+	chunkFile, err := os.Create(chunkFileName)
+	defer chunkFile.Close()
+	if err != nil {
+		log.Fatalf("Error opening chunk dump file '%s': %v", chunkFileName, err)
+	}
+	chunkFile.Write(chunkBytes)
+	fmt.Printf("-> Wrote chunk(%d,%d) bytes to %s.\n", cx, cz, chunkFileName)
+}
+
 func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 	// TODO - debug info
 	// fmt.Printf("\n\n****** CHUNK %d, %d ******\n\n\n", cx, cz)
-	// fmt.Printf("-> ParseChunk (%d, %d)\n", cx, cz)
-
-	// TODO - HACK - save chunk to a file
-	/*
-		chunkFileName := fmt.Sprintf("chunk-%d-%d.dat", cx, cz)
-		chunkFile, err := os.Create(chunkFileName)
-		if err != nil {
-			log.Fatalf("Error opening chunk dump file '%s': %v", chunkFileName, err)
-		}
-		chunkFile.Write(chunkBytes)
-		chunkFile.Close()
-		fmt.Printf("-> Wrote chunk(%d,%d) bytes to %s.\n", cx, cz, chunkFileName)
-	*/
+	fmt.Printf("*** ParseChunk (%d, %d) ***\n", cx, cz)
 
 	// Create the empty chunk
 	chunk := Chunk{X: cx, Z: cz}
@@ -50,6 +49,7 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 				log.Printf("   %s", line)
 			}
 		}
+		dumpChunk(cx, cz, chunkBytes)
 		os.Exit(1)
 	}
 

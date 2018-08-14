@@ -2,6 +2,7 @@ package nbtag
 
 import (
 	"encoding/binary"
+	"fmt"
 )
 
 type NBLong struct {
@@ -28,6 +29,10 @@ func (tag *NBLong) Parse(reader NBReader) error {
 	tag.value, err = reader.ReadInt64()
 
 	return err
+}
+
+func (tag *NBLong) String() string {
+	return fmt.Sprintf("NBLong: startPos=0x%04X, val=%d, name='%s'", tag.startPos, tag.value, tag.name)
 }
 
 func parseLongTag(data []byte, pos int) (*NBLong, int) {

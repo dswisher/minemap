@@ -95,6 +95,9 @@ func (r *readerData) PopContext() {
 		log.Fatal("Context stack underflow.")
 	}
 
+	tag := r.contextStack[len(r.contextStack)-1]
+	fmt.Printf("-> pop tag: %s\n", tag)
+
 	r.contextStack = r.contextStack[:len(r.contextStack)-1]
 }
 
@@ -115,7 +118,7 @@ func (r *readerData) Context() []string {
 
 	const lineLen = 20
 	var a, b strings.Builder
-	for i := 0; i < 40; i++ {
+	for i := 0; i < 3*lineLen; i++ {
 		if (i%lineLen) == 0 && i > 0 {
 			lines = append(lines, b.String())
 			lines = append(lines, a.String())
@@ -137,7 +140,7 @@ func (r *readerData) Context() []string {
 		}
 
 		val := r.data[pos+i]
-		if val > 32 {
+		if val > 32 && val < 128 {
 			fmt.Fprintf(&a, "  %c", val)
 		} else {
 			fmt.Fprint(&a, "  .")

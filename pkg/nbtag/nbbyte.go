@@ -5,6 +5,13 @@ type NBByte struct {
 	value int
 }
 
+func newByteTag() *NBByte {
+	tag := new(NBByte)
+	tag.kind = NBTypeByte
+
+	return tag
+}
+
 func parseByteTag(data []byte, pos int) (*NBByte, int) {
 	tag := new(NBByte)
 	tag.startPos = pos - 1
