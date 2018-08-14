@@ -27,6 +27,7 @@ func dumpChunk(cx, cz int, chunkBytes []byte) {
 	fmt.Printf("-> Wrote chunk(%d,%d) bytes to %s.\n", cx, cz, chunkFileName)
 }
 
+// TODO - this should return an error instead of aborting
 func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 	// TODO - debug info
 	// fmt.Printf("\n\n****** CHUNK %d, %d ******\n\n\n", cx, cz)
@@ -49,7 +50,7 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 				log.Printf("   %s", line)
 			}
 		}
-		dumpChunk(cx, cz, chunkBytes)
+		// dumpChunk(cx, cz, chunkBytes)
 		os.Exit(1)
 	}
 
@@ -61,29 +62,25 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 		topTag.Dump(os.Stdout)
 	}
 
-	// TODO - rip out this old parser code (once the new parser is done).
-	/*
-		// First tag should be compound
-		root, ok := (nbtag.ParseOld(chunkBytes, 0)).(*nbtag.NBCompound)
-		if !ok {
-			log.Fatal("Root is not NBCompound!")
-		}
+	root, ok := topTag.(*nbtag.NBCompound)
+	if !ok {
+		log.Fatal("Root is not NBCompound!")
+	}
 
-		l := root.GetChild("Level")
-		if l == nil {
-			log.Fatalf("Chunk (%d, %d) does not contain a level!\n", cx, cz)
-		}
+	l := root.GetChild("Level")
+	if l == nil {
+		log.Fatalf("Chunk (%d, %d) does not contain a level!\n", cx, cz)
+	}
 
-		level, ok := l.(*nbtag.NBCompound)
-		if !ok {
-			log.Fatal("Level is not an NBCompound!")
-		}
-	*/
+	level, ok := l.(*nbtag.NBCompound)
+	if !ok {
+		log.Fatal("Level is not an NBCompound!")
+	}
 
 	// TODO - more debug fun!
 	/*
 		if cx == 0 && cz == 0 {
-			fmt.Printf("Root, type=%d, name='%s'\n", root.GetType(), root.GetName())
+			fmt.Printf("Root, type=%d, name='%s'\n", root.Type(), root.Name())
 
 			dumpTag("xPos", level.GetChild("xPos"))
 			dumpTag("zPos", level.GetChild("zPos"))
@@ -107,28 +104,26 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 
 	// TODO - populate map data in the chunk
 
-	/*
-		// Populate some data into the chunk
-		if level.ContainsChild("Biomes") {
-			chunk.Biomes = make([]byte, 256)
+	// Populate some data into the chunk
+	if level.ContainsChild("Biomes") {
+		chunk.Biomes = make([]byte, 256)
 
-			biomes, ok := level.GetChild("Biomes").(*nbtag.NBIntArray)
+		biomes, ok := level.GetChild("Biomes").(*nbtag.NBIntArray)
+		if ok {
+			vals := biomes.GetValues()
+			for qq := 0; qq < 256; qq++ {
+				chunk.Biomes[qq] = byte(vals[qq])
+			}
+		} else {
+			biomes, ok := level.GetChild("Biomes").(*nbtag.NBByteArray)
 			if ok {
 				vals := biomes.GetValues()
 				for qq := 0; qq < 256; qq++ {
-					chunk.Biomes[qq] = byte(vals[qq])
-				}
-			} else {
-				biomes, ok := level.GetChild("Biomes").(*nbtag.NBByteArray)
-				if ok {
-					vals := biomes.GetValues()
-					for qq := 0; qq < 256; qq++ {
-						chunk.Biomes[qq] = vals[qq]
-					}
+					chunk.Biomes[qq] = vals[qq]
 				}
 			}
 		}
-	*/
+	}
 
 	// Return what we've built up
 	return &chunk
@@ -138,7 +133,7 @@ func dumpTag(title string, tag nbtag.NBTag) {
 	if tag == nil {
 		fmt.Printf("  -> tag '%s', nil\n", title)
 	} else {
-		fmt.Printf("  -> tag '%s', type=%d, name='%s'\n", title, tag.GetType(), tag.GetName())
+		fmt.Printf("  -> tag '%s', type=%d, name='%s'\n", title, tag.Type(), tag.Name())
 	}
 }
 
@@ -161,14 +156,26 @@ func (c *Chunk) Render(img *image.RGBA, offsetX, offsetZ int) {
 					bColor = color.RGBA{0x05, 0x66, 0x21, 255}
 				case 5: // Taiga
 					bColor = color.RGBA{0x0B, 0x66, 0x59, 255}
+				case 6: // Swampland
+					bColor = color.RGBA{0x07, 0xF9, 0xB2, 255}
 				case 7: // River
 					bColor = color.RGBA{0x00, 0x00, 0xFF, 255}
+				case 16: // Beach
+					bColor = color.RGBA{0xFA, 0xDE, 0x55, 255}
 				case 18: // ForestHills
 					bColor = color.RGBA{0x22, 0x55, 0x1C, 255}
 				case 19: // TaigaHills
 					bColor = color.RGBA{0x16, 0x39, 0x33, 255}
+				case 24: // Deep ocean
+					bColor = color.RGBA{0x00, 0x00, 0x30, 255}
+				case 25: // Stone beach
+					bColor = color.RGBA{0xA2, 0xA2, 0x84, 255}
+				case 29: // Roofed forest
+					bColor = color.RGBA{0x40, 0x51, 0x1A, 255}
 				case 34: // Wooded Mountains (1.12, Extreme Hills with Trees)
 					bColor = color.RGBA{0x50, 0x70, 0x50, 255}
+				case 129: // Sunflower plains
+					bColor = color.RGBA{0xB5, 0xDB, 0x88, 255}
 				default:
 					log.Fatalf("Pixel color for biome id=%d not coded; chunk=(%d, %d)", bid, c.X, c.Z)
 				}

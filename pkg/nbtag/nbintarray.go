@@ -32,6 +32,12 @@ func (tag *NBIntArray) Parse(reader NBReader) error {
 		return err
 	}
 
+	return tag.parseData(reader)
+}
+
+func (tag *NBIntArray) parseData(reader NBReader) error {
+	var err error
+
 	tag.count, err = reader.ReadInt32()
 	if err != nil {
 		return err

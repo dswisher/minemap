@@ -24,9 +24,9 @@ const (
 type NBTag interface {
 	fmt.Stringer
 
-	GetType() byte    // TODO - change to Type()
-	GetName() string  // TODO - change to Name()
-	GetStartPos() int // TODO - change to StartPos()
+	Type() byte
+	Name() string
+	StartPos() int
 	SetStartPos(pos int)
 
 	Parse(reader NBReader) error
@@ -110,15 +110,15 @@ func parseTag(reader NBReader) (NBTag, error) {
 	return tag, nil
 }
 
-func (t *tagData) GetType() byte {
+func (t *tagData) Type() byte {
 	return t.kind
 }
 
-func (t *tagData) GetName() string {
+func (t *tagData) Name() string {
 	return t.name
 }
 
-func (t *tagData) GetStartPos() int {
+func (t *tagData) StartPos() int {
 	return t.startPos
 }
 
@@ -127,15 +127,11 @@ func (t *tagData) SetStartPos(pos int) {
 }
 
 func (t *tagData) Dump(w io.Writer) {
+	// TODO - implement dump
 	fmt.Fprintf(w, "Dump is not yet implemented!\n")
 }
 
+// TODO - implement parseData for remaining types and remove this
 func (t *tagData) parseData(reader NBReader) error {
 	return newErrorf(reader, "parseData is not yet implemented for kind %d.", t.kind)
-}
-
-// - - - - OLD CODE BELOW, due to be deprecated
-
-func tagLog(format string, args ...interface{}) {
-	// fmt.Printf(format, args...)
 }

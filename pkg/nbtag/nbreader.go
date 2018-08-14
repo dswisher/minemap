@@ -130,7 +130,7 @@ func (r *readerData) Context() []string {
 	// Add the recent bytes
 	var pos int
 	if len(r.contextStack) > 0 {
-		pos = r.contextStack[len(r.contextStack)-1].GetStartPos() - lineLen
+		pos = r.contextStack[len(r.contextStack)-1].StartPos() - lineLen
 	} else {
 		pos = r.pos - 2 // go back a little for context
 	}

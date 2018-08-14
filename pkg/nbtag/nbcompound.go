@@ -17,7 +17,7 @@ func (c *NBCompound) AddChildren(children []NBTag) {
 }
 
 func (c *NBCompound) AddChild(child NBTag) {
-	c.children[child.GetName()] = child
+	c.children[child.Name()] = child
 }
 
 func (c *NBCompound) ContainsChild(name string) bool {
@@ -60,7 +60,7 @@ func (tag *NBCompound) Parse(reader NBReader) error {
 func (tag *NBCompound) parseData(reader NBReader) error {
 	var child NBTag
 	var err error
-	for ok := true; ok; ok = (child.GetType() != NBTypeEnd) {
+	for ok := true; ok; ok = (child.Type() != NBTypeEnd) {
 		child, err = parseTag(reader)
 		if err != nil {
 			return err
