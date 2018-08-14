@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"log"
+	"math"
 	"strings"
 )
 
@@ -17,6 +18,8 @@ type NBReader interface {
 	ReadInt32() (int, error)
 	ReadInt64() (int, error)
 	ReadString() (string, error)
+	ReadDouble() (float64, error)
+	ReadFloat() (float32, error)
 
 	PushContext(tag NBTag)
 	PopContext()
@@ -60,6 +63,20 @@ func (r *readerData) ReadInt64() (int, error) {
 	return val, nil
 }
 
+func (r *readerData) ReadDouble() (float64, error) {
+	bits := binary.BigEndian.Uint64(r.data[r.pos : r.pos+8])
+	val := math.Float64frombits(bits)
+	r.pos += 8
+	return val, nil
+}
+
+func (r *readerData) ReadFloat() (float32, error) {
+	bits := binary.BigEndian.Uint32(r.data[r.pos : r.pos+4])
+	val := math.Float32frombits(bits)
+	r.pos += 4
+	return val, nil
+}
+
 func (r *readerData) ReadString() (string, error) {
 	nameLen, err := r.ReadInt16()
 	if err != nil {
@@ -95,8 +112,8 @@ func (r *readerData) PopContext() {
 		log.Fatal("Context stack underflow.")
 	}
 
-	tag := r.contextStack[len(r.contextStack)-1]
-	fmt.Printf("-> pop tag: %s\n", tag)
+	// tag := r.contextStack[len(r.contextStack)-1]
+	// fmt.Printf("-> pop tag: %s\n", tag)
 
 	r.contextStack = r.contextStack[:len(r.contextStack)-1]
 }

@@ -30,7 +30,7 @@ func dumpChunk(cx, cz int, chunkBytes []byte) {
 func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 	// TODO - debug info
 	// fmt.Printf("\n\n****** CHUNK %d, %d ******\n\n\n", cx, cz)
-	fmt.Printf("*** ParseChunk (%d, %d) ***\n", cx, cz)
+	// fmt.Printf("*** ParseChunk (%d, %d) ***\n", cx, cz)
 
 	// Create the empty chunk
 	chunk := Chunk{X: cx, Z: cz}

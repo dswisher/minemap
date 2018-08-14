@@ -57,14 +57,18 @@ func newTag(reader NBReader, kind byte) (NBTag, error) {
 		tag = newEndTag()
 	case NBTypeByte:
 		tag = newByteTag()
-	// TODO - short
+	case NBTypeShort:
+		tag = newShortTag()
 	case NBTypeInt:
 		tag = newIntTag()
 	case NBTypeLong:
 		tag = newLongTag()
-	// TODO - float
-	// TODO - double
-	// TODO - byte array
+	case NBTypeFloat:
+		tag = newFloatTag()
+	case NBTypeDouble:
+		tag = newDoubleTag()
+	case NBTypeByteArray:
+		tag = newByteArrayTag()
 	case NBTypeString:
 		tag = newStringTag()
 	case NBTypeList:
@@ -125,10 +129,6 @@ func (t *tagData) SetStartPos(pos int) {
 
 func (t *tagData) Dump(w io.Writer) {
 	fmt.Fprintf(w, "Dump is not yet implemented!\n")
-}
-
-func (t *tagData) Parse(reader NBReader) error {
-	return newErrorf(reader, "Parse is not yet implemented for kind %d.", t.kind)
 }
 
 func (t *tagData) parseData(reader NBReader) error {
