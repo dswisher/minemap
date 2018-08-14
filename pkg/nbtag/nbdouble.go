@@ -27,6 +27,12 @@ func (tag *NBDouble) Parse(reader NBReader) error {
 		return err
 	}
 
+	return tag.parseData(reader)
+}
+
+// Parse the data for a double.
+func (tag *NBDouble) parseData(reader NBReader) error {
+	var err error
 	tag.value, err = reader.ReadDouble()
 
 	return err

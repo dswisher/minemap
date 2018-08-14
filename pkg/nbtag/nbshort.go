@@ -26,6 +26,12 @@ func (tag *NBShort) Parse(reader NBReader) error {
 		return err
 	}
 
+	return tag.parseData(reader)
+}
+
+// Parse the data for a short.
+func (tag *NBShort) parseData(reader NBReader) error {
+	var err error
 	tag.value, err = reader.ReadInt16()
 
 	return err

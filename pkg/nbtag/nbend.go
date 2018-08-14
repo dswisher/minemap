@@ -1,5 +1,7 @@
 package nbtag
 
+import "fmt"
+
 type NBEnd struct {
 	tagData
 }
@@ -14,8 +16,11 @@ func newEndTag() *NBEnd {
 // Parse an end tag, which does not have a name.
 // The current position should be the byte following the tag type byte.
 func (tag *NBEnd) Parse(reader NBReader) error {
-	// TODO - is this all we need?
 	return nil
+}
+
+func (tag *NBEnd) String() string {
+	return fmt.Sprintf("NBEnd: startPos=0x%04X", tag.startPos)
 }
 
 func parseEndTag(data []byte, pos int) (*NBEnd, int) {

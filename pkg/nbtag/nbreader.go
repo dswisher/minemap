@@ -125,17 +125,18 @@ func (r *readerData) Context() []string {
 		lines = append(lines, strings.Repeat(" ", depth*3)+tag.String())
 	}
 
+	const lineLen = 20
+
 	// Add the recent bytes
 	var pos int
 	if len(r.contextStack) > 0 {
-		pos = r.contextStack[len(r.contextStack)-1].GetStartPos()
+		pos = r.contextStack[len(r.contextStack)-1].GetStartPos() - lineLen
 	} else {
 		pos = r.pos - 2 // go back a little for context
 	}
 
-	const lineLen = 20
 	var a, b strings.Builder
-	for i := 0; i < 3*lineLen; i++ {
+	for i := 0; i < 4*lineLen; i++ {
 		if (i%lineLen) == 0 && i > 0 {
 			lines = append(lines, b.String())
 			lines = append(lines, a.String())

@@ -27,6 +27,12 @@ func (tag *NBFloat) Parse(reader NBReader) error {
 		return err
 	}
 
+	return tag.parseData(reader)
+}
+
+// Parse the data for a float.
+func (tag *NBFloat) parseData(reader NBReader) error {
+	var err error
 	tag.value, err = reader.ReadFloat()
 
 	return err

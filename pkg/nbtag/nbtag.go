@@ -135,10 +135,6 @@ func (t *tagData) parseData(reader NBReader) error {
 	return newErrorf(reader, "parseData is not yet implemented for kind %d.", t.kind)
 }
 
-func (t *tagData) String() string {
-	return fmt.Sprintf("(NBTag) - type=%d", t.kind)
-}
-
 // - - - - OLD CODE BELOW, due to be deprecated
 
 func ParseOld(data []byte, pos int) NBTag {
