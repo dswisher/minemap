@@ -3,7 +3,6 @@ package nbtag
 import (
 	"fmt"
 	"io"
-	"log"
 )
 
 const (
@@ -136,52 +135,6 @@ func (t *tagData) parseData(reader NBReader) error {
 }
 
 // - - - - OLD CODE BELOW, due to be deprecated
-
-func ParseOld(data []byte, pos int) NBTag {
-	tag, _ := parseTagOld(data, pos)
-
-	return tag
-}
-
-func parseTagOld(data []byte, pos int) (NBTag, int) {
-	var tag NBTag
-
-	kind := data[pos]
-	pos += 1
-
-	switch kind {
-	case NBTypeEnd:
-		tag, pos = parseEndTag(data, pos)
-	case NBTypeByte:
-		tag, pos = parseByteTag(data, pos)
-	case NBTypeShort:
-		tag, pos = parseShortTag(data, pos)
-	case NBTypeInt:
-		tag, pos = parseIntTag(data, pos)
-	case NBTypeLong:
-		tag, pos = parseLongTag(data, pos)
-	case NBTypeFloat:
-		tag, pos = parseFloatTag(data, pos)
-	case NBTypeDouble:
-		tag, pos = parseDoubleTag(data, pos)
-	case NBTypeByteArray:
-		tag, pos = parseByteArrayTag(data, pos)
-	case NBTypeString:
-		tag, pos = parseStringTag(data, pos)
-	case NBTypeList:
-		tag, pos = parseListTag(data, pos)
-	case NBTypeCompound:
-		tag, pos = parseCompoundTag(data, pos)
-	case NBTypeIntArray:
-		tag, pos = parseIntArrayTag(data, pos)
-	case NBTypeLongArray:
-		tag, pos = parseLongArrayTag(data, pos)
-	default:
-		log.Fatalf("-> Unhandled NBT tag type %d at pos 0x%x.\n", kind, pos-1)
-	}
-
-	return tag, pos
-}
 
 func tagLog(format string, args ...interface{}) {
 	// fmt.Printf(format, args...)

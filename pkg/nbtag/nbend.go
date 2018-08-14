@@ -22,14 +22,3 @@ func (tag *NBEnd) Parse(reader NBReader) error {
 func (tag *NBEnd) String() string {
 	return fmt.Sprintf("NBEnd: startPos=0x%04X", tag.startPos)
 }
-
-func parseEndTag(data []byte, pos int) (*NBEnd, int) {
-	tag := new(NBEnd)
-	tag.startPos = pos - 1
-	tag.kind = NBTypeEnd
-	tag.name = ""
-
-	tagLog("-> NBEnd\n")
-
-	return tag, pos
-}

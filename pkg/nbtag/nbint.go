@@ -1,7 +1,6 @@
 package nbtag
 
 import (
-	"encoding/binary"
 	"fmt"
 )
 
@@ -33,24 +32,4 @@ func (tag *NBInt) Parse(reader NBReader) error {
 
 func (tag *NBInt) String() string {
 	return fmt.Sprintf("NBInt: startPos=0x%04X, val=%d, name='%s'", tag.startPos, tag.value, tag.name)
-}
-
-func parseIntTag(data []byte, pos int) (*NBInt, int) {
-	tag := new(NBInt)
-	tag.startPos = pos - 1
-	tag.kind = NBTypeInt
-
-	tag.name, pos = parseString(data, pos)
-	tag.value, pos = parseInt32(data, pos)
-
-	tagLog("-> NBInt, name='%s', value='%d'\n", tag.name, tag.value)
-
-	return tag, pos
-}
-
-func parseInt32(data []byte, pos int) (int, int) {
-	val := int(binary.BigEndian.Uint32(data[pos : pos+4]))
-	pos += 4
-
-	return val, pos
 }
