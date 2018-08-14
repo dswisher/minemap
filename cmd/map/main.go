@@ -7,6 +7,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/dswisher/minemap/pkg/minecraft"
 )
 
 func main() {
@@ -27,7 +29,7 @@ func main() {
 	pngPath := os.Args[3]
 
 	fmt.Printf("...loading region x=%d, z=%d...\n", x, z)
-	r := OpenRegion("../../DATA/save1/region", x, z)
+	r := minecraft.OpenRegion("../../DATA/save1/region", x, z)
 	defer r.Close()
 
 	width := 512
