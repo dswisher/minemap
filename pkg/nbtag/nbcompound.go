@@ -2,6 +2,7 @@ package nbtag
 
 import (
 	"fmt"
+	"io"
 )
 
 type NBCompound struct {
@@ -73,4 +74,9 @@ func (tag *NBCompound) parseData(reader NBReader) error {
 
 func (tag *NBCompound) String() string {
 	return fmt.Sprintf("NBCompound: startPos=0x%04X, len(children)=%d, name='%s'", tag.startPos, len(tag.children), tag.name)
+}
+
+func (tag *NBCompound) dumpIndented(w io.Writer, depth int) {
+	// TODO - take depth into account
+	fmt.Fprintf(w, "%v\n", tag)
 }

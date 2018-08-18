@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"io"
 	"log"
 	"os"
 
@@ -14,6 +15,8 @@ type Chunk struct {
 	X, Z int
 
 	Biomes []byte
+
+	RootTag *nbtag.NBCompound
 }
 
 func dumpChunk(cx, cz int, chunkBytes []byte) {
@@ -58,14 +61,12 @@ func ParseChunk(cx, cz int, chunkBytes []byte) *Chunk {
 		log.Fatalf("topTag is nil!")
 	}
 
-	if cx == 0 && cz == 0 {
-		topTag.Dump(os.Stdout)
-	}
-
 	root, ok := topTag.(*nbtag.NBCompound)
 	if !ok {
 		log.Fatal("Root is not NBCompound!")
 	}
+
+	chunk.RootTag = root
 
 	l := root.GetChild("Level")
 	if l == nil {
@@ -185,5 +186,13 @@ func (c *Chunk) Render(img *image.RGBA, offsetX, offsetZ int) {
 		}
 	} else {
 		fillSquare(img, px, pz, color.RGBA{101, 67, 33, 255}, 16)
+	}
+}
+
+func (c *Chunk) Dump(w io.Writer) {
+	if c.RootTag == nil {
+		fmt.Fprintf(w, "Chunk.RootTag is nil.\n")
+	} else {
+		c.RootTag.Dump(w)
 	}
 }

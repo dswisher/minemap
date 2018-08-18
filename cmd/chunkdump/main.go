@@ -43,6 +43,8 @@ func main() {
 		os.Exit(2)
 	}
 
+	chunk.Dump(os.Stdout)
+
 	fmt.Printf("len(chunk.Biomes)=%d\n", len(chunk.Biomes))
 
 	// TODO - actually dump the data

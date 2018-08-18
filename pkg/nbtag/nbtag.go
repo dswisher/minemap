@@ -33,6 +33,7 @@ type NBTag interface {
 	parseData(reader NBReader) error
 
 	Dump(w io.Writer)
+	dumpIndented(w io.Writer, depth int)
 }
 
 type tagData struct {
@@ -127,8 +128,12 @@ func (t *tagData) SetStartPos(pos int) {
 }
 
 func (t *tagData) Dump(w io.Writer) {
-	// TODO - implement dump
-	fmt.Fprintf(w, "Dump is not yet implemented!\n")
+	t.dumpIndented(w, 0)
+}
+
+func (t *tagData) dumpIndented(w io.Writer, depth int) {
+	// TODO - implement dumpIndented
+	fmt.Fprintf(w, "tagData.dumpIndented is not yet implemented for kind %d.\n", t.kind)
 }
 
 // TODO - implement parseData for remaining types and remove this
