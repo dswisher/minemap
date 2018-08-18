@@ -193,6 +193,6 @@ func (c *Chunk) Dump(w io.Writer) {
 	if c.RootTag == nil {
 		fmt.Fprintf(w, "Chunk.RootTag is nil.\n")
 	} else {
-		c.RootTag.Dump(w)
+		c.RootTag.DumpIndented(w, 0)
 	}
 }

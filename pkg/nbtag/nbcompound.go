@@ -76,7 +76,9 @@ func (tag *NBCompound) String() string {
 	return fmt.Sprintf("NBCompound: startPos=0x%04X, len(children)=%d, name='%s'", tag.startPos, len(tag.children), tag.name)
 }
 
-func (tag *NBCompound) dumpIndented(w io.Writer, depth int) {
-	// TODO - take depth into account
-	fmt.Fprintf(w, "%v\n", tag)
+func (tag *NBCompound) DumpIndented(w io.Writer, depth int) {
+	writeIndented(w, depth, tag.String())
+	for _, v := range tag.children {
+		v.DumpIndented(w, depth+1)
+	}
 }

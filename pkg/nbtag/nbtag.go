@@ -3,6 +3,7 @@ package nbtag
 import (
 	"fmt"
 	"io"
+	"strings"
 )
 
 const (
@@ -32,8 +33,7 @@ type NBTag interface {
 	Parse(reader NBReader) error
 	parseData(reader NBReader) error
 
-	Dump(w io.Writer)
-	dumpIndented(w io.Writer, depth int)
+	DumpIndented(w io.Writer, depth int)
 }
 
 type tagData struct {
@@ -127,13 +127,14 @@ func (t *tagData) SetStartPos(pos int) {
 	t.startPos = pos
 }
 
-func (t *tagData) Dump(w io.Writer) {
-	t.dumpIndented(w, 0)
+func writeIndented(w io.Writer, depth int, format string, args ...interface{}) {
+	s := fmt.Sprintf(format, args...)
+	fmt.Fprintf(w, "%s%s\n", strings.Repeat(" ", depth*4), s)
 }
 
-func (t *tagData) dumpIndented(w io.Writer, depth int) {
-	// TODO - implement dumpIndented
-	fmt.Fprintf(w, "tagData.dumpIndented is not yet implemented for kind %d.\n", t.kind)
+func (t *tagData) DumpIndented(w io.Writer, depth int) {
+	// TODO - implement dumpIndented for all tags
+	writeIndented(w, depth, "tagData.dumpIndented is not yet implemented for kind %d.", t.kind)
 }
 
 // TODO - implement parseData for remaining types and remove this
