@@ -1,6 +1,9 @@
 package nbtag
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+)
 
 type NBByte struct {
 	tagData
@@ -30,4 +33,8 @@ func (tag *NBByte) Parse(reader NBReader) error {
 
 func (tag *NBByte) String() string {
 	return fmt.Sprintf("NBByte: startPos=0x%04X, val=%d, name='%s'", tag.startPos, tag.value, tag.name)
+}
+
+func (tag *NBByte) DumpIndented(w io.Writer, depth int) {
+	writeIndented(w, depth, tag.String())
 }

@@ -2,6 +2,7 @@ package nbtag
 
 import (
 	"fmt"
+	"io"
 )
 
 type NBList struct {
@@ -48,11 +49,17 @@ func (tag *NBList) parseData(reader NBReader) error {
 	}
 
 	// Parse the items
+	tag.items = make([]NBTag, tag.count)
+
 	for i := 0; i < tag.count; i++ {
 		inner, err := newTag(reader, tag.innerType)
 		if err != nil {
 			return err
 		}
+
+		inner.SetName(fmt.Sprintf("%s[%d]", tag.Name(), i))
+
+		tag.items[i] = inner
 
 		reader.PushContext(inner)
 		inner.SetStartPos(reader.Pos())
@@ -68,6 +75,13 @@ func (tag *NBList) parseData(reader NBReader) error {
 }
 
 func (tag *NBList) String() string {
-	return fmt.Sprintf("NBList: startPos=0x%04X, innerType=%d, count=%d, name='%s'",
-		tag.startPos, tag.innerType, tag.count, tag.name)
+	return fmt.Sprintf("NBList: startPos=0x%04X, innerType=%d, count=%d, len(items)=%d, name='%s'",
+		tag.startPos, tag.innerType, tag.count, len(tag.items), tag.name)
+}
+
+func (tag *NBList) DumpIndented(w io.Writer, depth int) {
+	writeIndented(w, depth, tag.String())
+	for i := 0; i < tag.count; i++ {
+		tag.items[i].DumpIndented(w, depth+1)
+	}
 }

@@ -1,11 +1,15 @@
 package nbtag
 
-import "fmt"
+import (
+	"fmt"
+	"io"
+	"strings"
+)
 
 type NBLongArray struct {
 	tagData
-	count int
-	value []int
+	count  int
+	values []uint
 }
 
 func newLongArrayTag() *NBLongArray {
@@ -29,14 +33,14 @@ func (tag *NBLongArray) Parse(reader NBReader) error {
 		return err
 	}
 
-	tag.value = make([]int, tag.count)
+	tag.values = make([]uint, tag.count)
 
 	for i := 0; i < tag.count; i++ {
 		v, err := reader.ReadInt64()
 		if err != nil {
 			return err
 		}
-		tag.value[i] = v
+		tag.values[i] = uint(v)
 	}
 
 	return err
@@ -44,4 +48,22 @@ func (tag *NBLongArray) Parse(reader NBReader) error {
 
 func (tag *NBLongArray) String() string {
 	return fmt.Sprintf("NBLongArray: startPos=0x%04X, count=%d, name='%s'", tag.startPos, tag.count, tag.name)
+}
+
+func (tag *NBLongArray) DumpIndented(w io.Writer, depth int) {
+	const max = 4
+	writeIndented(w, depth, tag.String())
+	var b strings.Builder
+	for i := 0; i < intMin(tag.count, max); i++ {
+		if i > 0 {
+			fmt.Fprintf(&b, " ")
+		}
+		fmt.Fprintf(&b, "%08X", tag.values[i])
+	}
+	if tag.count > max {
+		fmt.Fprintf(&b, "...")
+	}
+	if b.Len() > 0 {
+		writeIndented(w, depth+1, b.String())
+	}
 }

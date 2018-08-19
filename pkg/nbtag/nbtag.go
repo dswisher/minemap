@@ -29,6 +29,7 @@ type NBTag interface {
 	Name() string
 	StartPos() int
 	SetStartPos(pos int)
+	SetName(name string)
 
 	Parse(reader NBReader) error
 	parseData(reader NBReader) error
@@ -119,12 +120,23 @@ func (t *tagData) Name() string {
 	return t.name
 }
 
+func (t *tagData) SetName(name string) {
+	t.name = name
+}
+
 func (t *tagData) StartPos() int {
 	return t.startPos
 }
 
 func (t *tagData) SetStartPos(pos int) {
 	t.startPos = pos
+}
+
+func intMin(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 func writeIndented(w io.Writer, depth int, format string, args ...interface{}) {
@@ -134,7 +146,7 @@ func writeIndented(w io.Writer, depth int, format string, args ...interface{}) {
 
 func (t *tagData) DumpIndented(w io.Writer, depth int) {
 	// TODO - implement dumpIndented for all tags
-	writeIndented(w, depth, "tagData.dumpIndented is not yet implemented for kind %d.", t.kind)
+	writeIndented(w, depth, "-> tagData.dumpIndented is not yet implemented for kind %d.", t.kind)
 }
 
 // TODO - implement parseData for remaining types and remove this

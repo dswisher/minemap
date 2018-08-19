@@ -66,7 +66,9 @@ func (tag *NBCompound) parseData(reader NBReader) error {
 		if err != nil {
 			return err
 		}
-		tag.AddChild(child)
+		if child.Type() > 0 {
+			tag.AddChild(child)
+		}
 	}
 
 	return nil

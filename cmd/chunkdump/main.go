@@ -9,6 +9,9 @@ import (
 )
 
 func main() {
+	// TODO - add command-line option to dump values as hex or decimal
+	// TODO - add optional path parameter to print out a specific item (with extra detail)
+
 	if len(os.Args) < 3 {
 		fmt.Printf("Usage: %s cx cz\n", os.Args[0])
 		return

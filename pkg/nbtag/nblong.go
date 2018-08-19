@@ -2,6 +2,7 @@ package nbtag
 
 import (
 	"fmt"
+	"io"
 )
 
 type NBLong struct {
@@ -32,4 +33,8 @@ func (tag *NBLong) Parse(reader NBReader) error {
 
 func (tag *NBLong) String() string {
 	return fmt.Sprintf("NBLong: startPos=0x%04X, val=%d, name='%s'", tag.startPos, tag.value, tag.name)
+}
+
+func (tag *NBLong) DumpIndented(w io.Writer, depth int) {
+	writeIndented(w, depth, tag.String())
 }
