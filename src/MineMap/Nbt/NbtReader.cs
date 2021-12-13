@@ -1,18 +1,18 @@
 
 using System;
-using System.IO;
-using System.Text;
+
+using MineMap.Helpers;
 
 namespace MineMap.Nbt
 {
     public class NbtReader : IDisposable
     {
-        private Stream stream;
+        private StreamWrapper wrapper;
 
 
-        public NbtReader(Stream stream)
+        public NbtReader(StreamWrapper wrapper)
         {
-            this.stream = stream;
+            this.wrapper = wrapper;
         }
 
 
@@ -27,9 +27,7 @@ namespace MineMap.Nbt
             }
 
             // Read the name
-            var name = ReadString();
-
-            Console.WriteLine(" -> tag type {0}, name '{1}'", tagType, name);
+            var name = wrapper.ReadString();
 
             // Based on the type, create the tag and finish parsing it
             return ParseValue(tagType);
@@ -38,10 +36,10 @@ namespace MineMap.Nbt
 
         public void Dispose()
         {
-            if (stream != null)
+            if (wrapper != null)
             {
-                stream.Close();
-                stream = null;
+                wrapper.Dispose();
+                wrapper = null;
             }
         }
 
@@ -80,6 +78,9 @@ namespace MineMap.Nbt
                 case NbtTagType.IntArray:
                     return ParseIntArrayValue();
 
+                case NbtTagType.LongArray:
+                    return ParseLongArrayValue();
+
                 default:
                     throw new NotImplementedException($"Tag type {tagType} is not yet implemented.");
             }
@@ -88,43 +89,43 @@ namespace MineMap.Nbt
 
         private NbtByte ParseByteValue()
         {
-            return new NbtByte(ReadByte());
+            return new NbtByte(wrapper.ReadByte());
         }
 
 
         private NbtShort ParseShortValue()
         {
-            return new NbtShort(ReadShort());
+            return new NbtShort(wrapper.ReadShort());
         }
 
 
         private NbtInt ParseIntValue()
         {
-            return new NbtInt(ReadInt());
+            return new NbtInt(wrapper.ReadInt());
         }
 
 
         private NbtLong ParseLongValue()
         {
-            return new NbtLong(ReadLong());
+            return new NbtLong(wrapper.ReadLong());
         }
 
 
         private NbtFloat ParseFloatValue()
         {
-            return new NbtFloat(ReadFloat());
+            return new NbtFloat(wrapper.ReadFloat());
         }
 
 
         private NbtDouble ParseDoubleValue()
         {
-            return new NbtDouble(ReadDouble());
+            return new NbtDouble(wrapper.ReadDouble());
         }
 
 
         private NbtString ParseStringValue()
         {
-            return new NbtString(ReadString());
+            return new NbtString(wrapper.ReadString());
         }
 
 
@@ -141,13 +142,11 @@ namespace MineMap.Nbt
                     return parent;
                 }
 
-                var name = ReadString();
-
-                Console.WriteLine(" -> tag type {0}, name '{1}'", childType, name);
+                var name = wrapper.ReadString();
 
                 var val = ParseValue(childType);
 
-                // TODO - add the child onto the parent
+                parent.Add(name, val);
             }
         }
 
@@ -157,7 +156,7 @@ namespace MineMap.Nbt
             var parent = new NbtList();
 
             var childType = ReadTagType();
-            var count = ReadInt();
+            var count = wrapper.ReadInt();
 
             for (var i = 0; i < count; i++)
             {
@@ -172,150 +171,35 @@ namespace MineMap.Nbt
 
         private NbtIntArray ParseIntArrayValue()
         {
-            var count = ReadInt();
+            var count = wrapper.ReadInt();
             var array = new int[count];
 
             for (var i = 0; i < count; i++)
             {
-                array[i] = ReadInt();
+                array[i] = wrapper.ReadInt();
             }
 
             return new NbtIntArray(array);
         }
 
 
+        private NbtLongArray ParseLongArrayValue()
+        {
+            var count = wrapper.ReadInt();
+            var array = new long[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                array[i] = wrapper.ReadLong();
+            }
+
+            return new NbtLongArray(array);
+        }
+
+
         private NbtTagType ReadTagType()
         {
-            return (NbtTagType)ReadByte();
-        }
-
-
-        private byte ReadByte()
-        {
-            var val = stream.ReadByte();
-
-            if (val == -1)
-            {
-                // TODO - better exception
-                throw new Exception("EOF");
-            }
-
-            return (byte)val;
-        }
-
-
-        private short ReadShort()
-        {
-            var bytes = new byte[2];
-
-            stream.Read(bytes, 0, 2);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-
-            return BitConverter.ToInt16(bytes, 0);
-        }
-
-
-        private ushort ReadUnsignedShort()
-        {
-            var bytes = new byte[2];
-
-            stream.Read(bytes, 0, 2);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-
-            return BitConverter.ToUInt16(bytes, 0);
-        }
-
-
-        private int ReadInt()
-        {
-            var bytes = new byte[4];
-
-            stream.Read(bytes, 0, 4);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-
-            return BitConverter.ToInt32(bytes, 0);
-        }
-
-
-        private long ReadLong()
-        {
-            var bytes = new byte[8];
-
-            stream.Read(bytes, 0, 8);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-
-            return BitConverter.ToInt64(bytes, 0);
-        }
-
-
-        private float ReadFloat()
-        {
-            var bytes = new byte[4];
-
-            stream.Read(bytes, 0, 4);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-
-            return BitConverter.ToSingle(bytes, 0);
-        }
-
-
-        private double ReadDouble()
-        {
-            var bytes = new byte[8];
-
-            stream.Read(bytes, 0, 8);
-
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-
-            return BitConverter.ToDouble(bytes, 0);
-        }
-
-
-        private string ReadString()
-        {
-            var nameLen = ReadUnsignedShort();
-
-            return ReadString(nameLen);
-        }
-
-
-        private string ReadString(int len)
-        {
-            // Special case - if the len is zero, return empty string
-            if (len == 0)
-            {
-                return string.Empty;
-            }
-
-            // Read the string
-            var strBytes = new byte[len];
-
-            stream.Read(strBytes, 0, len);
-
-            return Encoding.UTF8.GetString(strBytes);
+            return (NbtTagType)wrapper.ReadByte();
         }
     }
 }

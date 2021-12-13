@@ -9,6 +9,12 @@ namespace MineMap.Nbt
         }
 
 
+        public override NbtInt AsInt()
+        {
+            return this;
+        }
+
+
         public int Value { get; private set; }
     }
 }

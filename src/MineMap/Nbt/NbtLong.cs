@@ -9,6 +9,12 @@ namespace MineMap.Nbt
         }
 
 
+        public override NbtLong AsLong()
+        {
+            return this;
+        }
+
+
         public long Value { get; private set; }
     }
 }
