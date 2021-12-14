@@ -1,3 +1,5 @@
+// Copyright (c) Doug Swisher. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace MineMap.Nbt
 {
@@ -9,14 +11,14 @@ namespace MineMap.Nbt
         }
 
 
+        public override NbtTagType TagType => NbtTagType.Long;
+
+        public long Value { get; private set; }
+
+
         public override NbtLong AsLong()
         {
             return this;
         }
-
-
-        public override NbtTagType TagType => NbtTagType.Long;
-
-        public long Value { get; private set; }
     }
 }

@@ -1,3 +1,5 @@
+// Copyright (c) Doug Swisher. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using MineMap.Nbt;
 
@@ -5,14 +7,6 @@ namespace MineMap.Models
 {
     public class Level
     {
-        public static Level Load(NbtReader reader)
-        {
-            var tag = reader.ReadTag();
-
-            return new Level(tag.AsCompound());
-        }
-
-
         public Level(NbtCompound root)
         {
             var data = root["Data"].AsCompound();
@@ -52,5 +46,13 @@ namespace MineMap.Models
         public int SpawnX { get; private set; }
         public int SpawnY { get; private set; }
         public int SpawnZ { get; private set; }
+
+
+        public static Level Load(NbtReader reader)
+        {
+            var tag = reader.ReadTag();
+
+            return new Level(tag.AsCompound());
+        }
     }
 }

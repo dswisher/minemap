@@ -1,3 +1,5 @@
+// Copyright (c) Doug Swisher. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
 
@@ -7,12 +9,6 @@ namespace MineMap.Chunks
 {
     public class Chunk
     {
-        public static Chunk LoadFrom(NbtCompound root)
-        {
-            return new Chunk(root);
-        }
-
-
         private Chunk(NbtCompound root)
         {
             // TODO! HACK! Remove this debug code
@@ -43,5 +39,11 @@ namespace MineMap.Chunks
         public int X { get; private set; }
         public int Y { get; private set; }
         public int Z { get; private set; }
+
+
+        public static Chunk LoadFrom(NbtCompound root)
+        {
+            return new Chunk(root);
+        }
     }
 }

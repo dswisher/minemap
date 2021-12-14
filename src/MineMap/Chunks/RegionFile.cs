@@ -1,3 +1,5 @@
+// Copyright (c) Doug Swisher. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
 using System.IO;
@@ -20,14 +22,6 @@ namespace MineMap.Chunks
         private StreamWrapper wrapper;
 
 
-        public static RegionFile Load(string regionDir, RegionPoint pos)
-        {
-            var path = Path.Combine(regionDir, $"r.{pos.X}.{pos.Z}.mca");
-
-            return new RegionFile(path);
-        }
-
-
         private RegionFile(string path)
         {
             var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
@@ -37,6 +31,14 @@ namespace MineMap.Chunks
             {
                 offsets[i] = wrapper.ReadInt();
             }
+        }
+
+
+        public static RegionFile Load(string regionDir, RegionPoint pos)
+        {
+            var path = Path.Combine(regionDir, $"r.{pos.X}.{pos.Z}.mca");
+
+            return new RegionFile(path);
         }
 
 
@@ -102,9 +104,9 @@ namespace MineMap.Chunks
         }
 
 
-        private int GetOffset (ChunkPoint pos)
+        private int GetOffset(ChunkPoint pos)
         {
-            var indexPos = (pos.X & 0x1f) + (pos.Z & 0x1f) * 32;
+            var indexPos = (pos.X & 0x1f) + ((pos.Z & 0x1f) * 32);
 
             return offsets[indexPos];
         }

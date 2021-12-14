@@ -1,3 +1,5 @@
+// Copyright (c) Doug Swisher. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
 
 namespace MineMap.Helpers
 {
@@ -17,8 +19,8 @@ namespace MineMap.Helpers
         {
             int hash = 17;
 
-            hash = hash * 23 + X.GetHashCode();
-            hash = hash * 23 + Z.GetHashCode();
+            hash = (hash * 23) + X.GetHashCode();
+            hash = (hash * 23) + Z.GetHashCode();
 
             return hash;
         }

@@ -1,4 +1,6 @@
-﻿
+﻿// Copyright (c) Doug Swisher. All Rights Reserved.
+// Licensed under the MIT License. See LICENSE in the project root for license information.
+
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -37,10 +39,7 @@ namespace MineMap
                 Console.WriteLine("Seed: {0}", level.Seed);
 
                 var spawnPos = new WorldPoint(level.Player.SpawnX, level.Player.SpawnY, level.Player.SpawnZ);
-                // var spawnPos = new WorldPoint(174, 67, -40);
                 var chunkPos = spawnPos.ToChunk();
-                // var chunkPos = new ChunkPoint(10, 4, -3);
-                // var chunkPos = new ChunkPoint(10, 4, -3);
                 var regionPos = chunkPos.ToRegion();
 
                 Console.WriteLine("Block {0} in chunk {1} in region {2}.", spawnPos, chunkPos, regionPos);
