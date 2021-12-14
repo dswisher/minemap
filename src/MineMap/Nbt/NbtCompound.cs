@@ -12,6 +12,9 @@ namespace MineMap.Nbt
         }
 
 
+        public override NbtTagType TagType => NbtTagType.Compound;
+
+
         public override NbtCompound AsCompound()
         {
             return this;

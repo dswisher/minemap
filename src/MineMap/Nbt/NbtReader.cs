@@ -75,6 +75,9 @@ namespace MineMap.Nbt
                 case NbtTagType.Compound:
                     return ParseCompoundValue();
 
+                case NbtTagType.ByteArray:
+                    return ParseByteArrayValue();
+
                 case NbtTagType.IntArray:
                     return ParseIntArrayValue();
 
@@ -153,19 +156,33 @@ namespace MineMap.Nbt
 
         private NbtList ParseListValue()
         {
-            var parent = new NbtList();
-
             var childType = ReadTagType();
             var count = wrapper.ReadInt();
+
+            var parent = new NbtList(childType, count);
 
             for (var i = 0; i < count; i++)
             {
                 var child = ParseValue(childType);
 
-                // TODO - add child to the list
+                parent.Value[i] = child;
             }
 
             return parent;
+        }
+
+
+        private NbtByteArray ParseByteArrayValue()
+        {
+            var count = wrapper.ReadInt();
+            var array = new byte[count];
+
+            for (var i = 0; i < count; i++)
+            {
+                array[i] = wrapper.ReadByte();
+            }
+
+            return new NbtByteArray(array);
         }
 
 

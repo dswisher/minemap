@@ -9,6 +9,14 @@ namespace MineMap.Nbt
         }
 
 
+        public override NbtTagType TagType => NbtTagType.Byte;
+
         public byte Value { get; private set; }
+
+
+        public override NbtByte AsByte()
+        {
+            return this;
+        }
     }
 }

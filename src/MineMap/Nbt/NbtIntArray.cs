@@ -9,6 +9,8 @@ namespace MineMap.Nbt
         }
 
 
+        public override NbtTagType TagType => NbtTagType.IntArray;
+
         public int[] Value { get; private set; }
     }
 }

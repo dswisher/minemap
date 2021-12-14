@@ -48,10 +48,7 @@ namespace MineMap.Chunks
             {
                 var rootTag = reader.ReadTag().AsCompound();
 
-                rootTag.Dump();
-
-                // return Chunk.LoadFrom(rootTag);
-                return new Chunk();
+                return Chunk.LoadFrom(rootTag);
             }
         }
     }

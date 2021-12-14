@@ -9,6 +9,8 @@ namespace MineMap.Nbt
         }
 
 
+        public override NbtTagType TagType => NbtTagType.Short;
+
         public short Value { get; private set; }
     }
 }

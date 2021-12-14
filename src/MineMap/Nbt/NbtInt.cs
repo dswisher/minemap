@@ -9,6 +9,9 @@ namespace MineMap.Nbt
         }
 
 
+        public override NbtTagType TagType => NbtTagType.Int;
+
+
         public override NbtInt AsInt()
         {
             return this;

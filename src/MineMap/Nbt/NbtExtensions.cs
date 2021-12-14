@@ -14,12 +14,51 @@ namespace MineMap.Nbt
                 writer = Console.Out;
             }
 
-            writer.WriteLine("Root");
+            Dump(writer, root, "Root", 0);
+        }
 
-            foreach (var child in root.OrderBy(x => x.Key))
+
+        private static void Dump(TextWriter writer, NbtCompound item, string name, int depth)
+        {
+            writer.WriteLine("{0} {1}: compound", Spaces(depth), name);
+
+            foreach (var child in item.OrderBy(x => x.Key))
             {
-                writer.WriteLine("   -> {0}", child.Key);
+                if (child.Value is NbtCompound comVal)
+                {
+                    Dump(writer, comVal, child.Key, depth + 1);
+                }
+                else if (child.Value is NbtByte byteVal)
+                {
+                    writer.WriteLine("{0} {1} (byte): {2}", Spaces(depth + 1), child.Key, byteVal.Value);
+                }
+                else if (child.Value is NbtInt intVal)
+                {
+                    writer.WriteLine("{0} {1} (int): {2}", Spaces(depth + 1), child.Key, intVal.Value);
+                }
+                else if (child.Value is NbtLong longVal)
+                {
+                    writer.WriteLine("{0} {1} (long): {2}", Spaces(depth + 1), child.Key, longVal.Value);
+                }
+                else if (child.Value is NbtString strVal)
+                {
+                    writer.WriteLine("{0} {1} (str): '{2}'", Spaces(depth + 1), child.Key, strVal.Value);
+                }
+                else if (child.Value is NbtList listVal)
+                {
+                    writer.WriteLine("{0} {1} (list): {2} items of type {3}", Spaces(depth + 1), child.Key, listVal.Value.Length, listVal.ChildType);
+                }
+                else
+                {
+                    writer.WriteLine("{0} {1} ({2}): TYPE TBD", Spaces(depth + 1), child.Key, child.Value.TagType.ToString().ToLower());
+                }
             }
+        }
+
+
+        private static string Spaces(int depth)
+        {
+            return new string(' ', depth * 3);
         }
     }
 }
