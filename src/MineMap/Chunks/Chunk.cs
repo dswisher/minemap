@@ -12,22 +12,12 @@ namespace MineMap.Chunks
         private Chunk(NbtCompound root)
         {
             // TODO! HACK! Remove this debug code
-            // root.Dump();
             var sections = root["sections"].AsList();
 
-            // var num = 20;
-            // var section = sections.Value[num].AsCompound();
-            // Console.WriteLine("Section[{0}]:", num);
-            // section.Dump();
-
-            for (var i = 0; i < sections.Value.Length; i++)
-            {
-                var section = sections.Value[i].AsCompound();
-                var y = section["Y"].AsByte().Value;
-
-                Console.WriteLine($"  section[{i}].Y = {y}");
-            }
-
+            var num = 8;
+            var section = sections.Value[num].AsCompound();
+            Console.WriteLine("Section[{0}]:", num);
+            section.Dump();
 
 
             X = root["xPos"].AsInt().Value;

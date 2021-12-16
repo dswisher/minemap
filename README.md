@@ -1,6 +1,6 @@
 # Minemap
 
-Generate map images from Minecraft world files.
+Generate map images from Minecraft world files. Currently only supports the Java edition.
 
 # Possibly Useful Links
 
@@ -9,9 +9,10 @@ Generate map images from Minecraft world files.
     * [NBT Spec](http://web.archive.org/web/20110723210920/http://www.minecraft.net/docs/NBT.txt) (web archive)
     * Region - [Fandom](https://minecraft.fandom.com/wiki/Region_file_format) - [Gamepedia](https://minecraft.gamepedia.com/Region_file_format)
     * Chunks - [Fandom](https://minecraft.fandom.com/wiki/Chunk_format) - [Gamepedia](https://minecraft.gamepedia.com/Chunk_format)
+    * [Level](https://minecraft.fandom.com/wiki/Java_Edition_level_format) and [Player](https://minecraft.fandom.com/wiki/Player.dat_format)
 * Data Values: [Java Edition](https://minecraft.gamepedia.com/Java_Edition_data_values)
-* Tutorials: [Clockwork Codex](http://clockworkcodex.blogspot.com/2011/06/minecraft-mapping-reading-minecraft.html)
-* Code: [Enklume](https://github.com/Hugobros3/Enklume) (Java)
+* Articles: [Clockwork Codex](http://clockworkcodex.blogspot.com/2011/06/minecraft-mapping-reading-minecraft.html)
+* Tools: [Dinnerbone Coords](https://dinnerbone.com/minecraft/tools/coordinates/)
 
 ## Similar Tools
 
@@ -22,4 +23,5 @@ Generate map images from Minecraft world files.
 * [Minecraft-Overviewer](https://github.com/overviewer/Minecraft-Overviewer) (Python) - Render high-resolution maps of a Minecraft world with a Leaflet powered interface
     * [Design Doc](https://docs.overviewer.org/en/latest/design/designdoc/#)
     * [Leaflet JS](https://leafletjs.com/)
+* [Hugobros3/Enklume](https://github.com/Hugobros3/Enklume) (Java) - Java library for parsing Minecraft save files
 

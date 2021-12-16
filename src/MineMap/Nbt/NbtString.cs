@@ -14,5 +14,11 @@ namespace MineMap.Nbt
         public override NbtTagType TagType => NbtTagType.String;
 
         public string Value { get; private set; }
+
+
+        public override NbtString AsString()
+        {
+            return this;
+        }
     }
 }

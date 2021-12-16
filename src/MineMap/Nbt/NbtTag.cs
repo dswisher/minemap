@@ -19,6 +19,11 @@ namespace MineMap.Nbt
             throw new InvalidCastException();
         }
 
+        public virtual NbtString AsString()
+        {
+            throw new InvalidCastException();
+        }
+
         public virtual NbtLong AsLong()
         {
             throw new InvalidCastException();

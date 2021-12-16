@@ -22,8 +22,8 @@ namespace MineMap.Helpers
         {
             return new RegionPoint
             {
-                X = X / 32,
-                Z = Z / 32
+                X = X >> 5,
+                Z = Z >> 5
             };
         }
 

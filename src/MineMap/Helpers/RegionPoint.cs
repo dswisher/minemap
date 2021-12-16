@@ -5,6 +5,18 @@ namespace MineMap.Helpers
 {
     public class RegionPoint
     {
+        public RegionPoint()
+        {
+        }
+
+
+        public RegionPoint(int x, int z)
+        {
+            X = x;
+            Z = z;
+        }
+
+
         public int X { get; set; }
         public int Z { get; set; }
 
