@@ -5,14 +5,23 @@ Generate map images from Minecraft world files. Currently only supports the Java
 # Possibly Useful Links
 
 * Formats
-    * NBT - [Fandom](https://minecraft.fandom.com/wiki/NBT_format) - [Gamepedia](https://minecraft.gamepedia.com/NBT_format)
+    * NBT - [Fandom](https://minecraft.fandom.com/wiki/NBT_format)
     * [NBT Spec](http://web.archive.org/web/20110723210920/http://www.minecraft.net/docs/NBT.txt) (web archive)
-    * Region - [Fandom](https://minecraft.fandom.com/wiki/Region_file_format) - [Gamepedia](https://minecraft.gamepedia.com/Region_file_format)
-    * Chunks - [Fandom](https://minecraft.fandom.com/wiki/Chunk_format) - [Gamepedia](https://minecraft.gamepedia.com/Chunk_format)
+    * Region - [Fandom](https://minecraft.fandom.com/wiki/Region_file_format)
+    * Chunks - [Fandom](https://minecraft.fandom.com/wiki/Chunk_format)
     * [Level](https://minecraft.fandom.com/wiki/Java_Edition_level_format) and [Player](https://minecraft.fandom.com/wiki/Player.dat_format)
 * Data Values: [Java Edition](https://minecraft.gamepedia.com/Java_Edition_data_values)
 * Articles: [Clockwork Codex](http://clockworkcodex.blogspot.com/2011/06/minecraft-mapping-reading-minecraft.html)
 * Tools: [Dinnerbone Coords](https://dinnerbone.com/minecraft/tools/coordinates/)
+
+
+## Dependencies
+
+* [ImageSharp](https://github.com/SixLabors/ImageSharp) - used for cross-platform image creation
+    * Docs - [Getting Started](https://docs.sixlabors.com/articles/imagesharp/gettingstarted.html)
+* [SharpZipLib](https://github.com/icsharpcode/SharpZipLib) - used to decompress chunks
+* [CommandLine](https://github.com/commandlineparser/commandline) - used to parse command line args in the CLI
+
 
 ## Similar Tools
 

@@ -2,3 +2,6 @@
 obj
 bin
 
+test/MineMap.Lib.Tests/coverage.opencover.xml
+test/MineMap.Lib.Tests/coveragereport
+
