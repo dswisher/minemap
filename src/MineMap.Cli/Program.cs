@@ -15,10 +15,10 @@ namespace MineMap.Cli
         {
             try
             {
-                // TODO - remove "object" once we have a second verb
-                var parsedArgs = Parser.Default.ParseArguments<DumpRegionOptions, object>(args);
+                var parsedArgs = Parser.Default.ParseArguments<DumpChunkOptions, DumpRegionOptions>(args);
 
                 // Process each verb separately, because that's the way the library seems to work...is there a better way?
+                parsedArgs.WithParsed<DumpChunkOptions>(options => new DumpChunkCommand().Run(options));
                 parsedArgs.WithParsed<DumpRegionOptions>(options => new DumpRegionCommand().Run(options));
             }
             catch (Exception ex)
