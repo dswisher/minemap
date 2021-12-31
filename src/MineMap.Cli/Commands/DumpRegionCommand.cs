@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 
+using MineMap.Cli.Helpers;
 using MineMap.Cli.Options;
 using MineMap.Lib.Files;
 using MineMap.Lib.Util;
@@ -15,21 +16,7 @@ namespace MineMap.Cli.Commands
         public void Run(DumpRegionOptions options)
         {
             // Set up the world, which will be used to find the region file.
-            World world = null;
-            if (!string.IsNullOrEmpty(options.WorldDir))
-            {
-                world = World.FromDirectory(options.WorldDir);
-            }
-            else if (!string.IsNullOrEmpty(options.WorldName))
-            {
-                world = World.FromName(options.WorldName);
-            }
-            else
-            {
-                // TODO - throw a custom exception and catch it in Program, to properly set the exit status.
-                Console.WriteLine("You must specify either a world directory or a world name.");
-                return;
-            }
+            var world = options.GetWorld();
 
             // Get the path to the region file
             var pt = new RegionPoint(options.X, options.Z);
@@ -67,7 +54,7 @@ namespace MineMap.Cli.Commands
 
                 for (var x = 0; x < 32; x++)
                 {
-                    var pt = new ChunkPoint(x, 0, z);
+                    var pt = new ChunkPoint(x, z);
 
                     if (region.HasChunk(pt))
                     {

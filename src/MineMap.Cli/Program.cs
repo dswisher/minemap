@@ -5,6 +5,7 @@ using System;
 
 using CommandLine;
 using MineMap.Cli.Commands;
+using MineMap.Cli.Exceptions;
 using MineMap.Cli.Options;
 
 namespace MineMap.Cli
@@ -15,11 +16,16 @@ namespace MineMap.Cli
         {
             try
             {
-                var parsedArgs = Parser.Default.ParseArguments<DumpChunkOptions, DumpRegionOptions>(args);
+                var parsedArgs = Parser.Default.ParseArguments<DumpChunkOptions, DumpRegionOptions, TimeMapOptions>(args);
 
                 // Process each verb separately, because that's the way the library seems to work...is there a better way?
                 parsedArgs.WithParsed<DumpChunkOptions>(options => new DumpChunkCommand().Run(options));
                 parsedArgs.WithParsed<DumpRegionOptions>(options => new DumpRegionCommand().Run(options));
+                parsedArgs.WithParsed<TimeMapOptions>(options => new TimeMapCommand().Run(options));
+            }
+            catch (CliException ex)
+            {
+                Console.WriteLine(ex.Message);
             }
             catch (Exception ex)
             {

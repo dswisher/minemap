@@ -2,7 +2,9 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 using MineMap.Lib.Util;
 
@@ -38,6 +40,15 @@ namespace MineMap.Lib.Files
         public string GetRegionPath(RegionPoint pt)
         {
             return Path.Join(worldRoot.FullName, "region", $"r.{pt.X}.{pt.Z}.mca");
+        }
+
+
+        public IEnumerable<string> ListRegionPaths()
+        {
+            foreach (var regionPath in Directory.GetFiles(Path.Join(worldRoot.FullName, "region")).OrderBy(x => x))
+            {
+                yield return regionPath;
+            }
         }
     }
 }

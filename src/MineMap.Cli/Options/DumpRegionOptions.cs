@@ -6,7 +6,7 @@ using CommandLine;
 namespace MineMap.Cli.Options
 {
     [Verb("dump-region", HelpText = "Parse a region file and write some info to stdout.")]
-    public class DumpRegionOptions
+    public class DumpRegionOptions : IWorldOptions
     {
         [Option("world", HelpText = "The name of the world in which to find the region.")]
         public string WorldName { get; set; }

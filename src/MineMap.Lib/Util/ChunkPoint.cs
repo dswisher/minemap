@@ -5,16 +5,14 @@ namespace MineMap.Lib.Util
 {
     public class ChunkPoint
     {
-        public ChunkPoint(int x, int y, int z)
+        public ChunkPoint(int x, int z)
         {
             X = x;
-            Y = y;
             Z = z;
         }
 
 
         public int X { get; set; }
-        public int Y { get; set; }
         public int Z { get; set; }
 
 
@@ -30,7 +28,7 @@ namespace MineMap.Lib.Util
 
         public override string ToString()
         {
-            return $"({X}, {Y}, {Z})";
+            return $"({X}, {Z})";
         }
     }
 }

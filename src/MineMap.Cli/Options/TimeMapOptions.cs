@@ -5,19 +5,13 @@ using CommandLine;
 
 namespace MineMap.Cli.Options
 {
-    [Verb("dump-chunk", HelpText = "Parse a region file, extract the specified chunk, and write some info to stdout.")]
-    public class DumpChunkOptions : IWorldOptions
+    [Verb("time-map", HelpText = "Create a map that shows inhabited time for each chunk using a gradient.")]
+    public class TimeMapOptions : IWorldOptions
     {
         [Option("world", HelpText = "The name of the world in which to find the region.")]
         public string WorldName { get; set; }
 
         [Option("world-dir", HelpText = "The directory containing the world in which to find the region.")]
         public string WorldDir { get; set; }
-
-        [Option("cx", Default = 0, HelpText = "The X coordinate of the chunk.")]
-        public int X { get; set; }
-
-        [Option("cz", Default = 0, HelpText = "The Z coordinate of the chunk.")]
-        public int Z { get; set; }
     }
 }

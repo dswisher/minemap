@@ -3,8 +3,10 @@
 
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+using MineMap.Lib.Chunks;
 using MineMap.Lib.Util;
 
 namespace MineMap.Lib.Files
@@ -17,12 +19,29 @@ namespace MineMap.Lib.Files
         private const int CompressionGzip = 1;
         private const int CompressionZlib = 2;
 
+        private static readonly Regex NameRegex = new Regex(@"r\.([^\.]*)\.([^\.]*)\.mca");
+
         private readonly int[] offsets = new int[IndexSize];
 
         private StreamWrapper wrapper;
 
         public Region(string path)
         {
+            // Pick apart the file name to extract the X and Z values
+            var name = Path.GetFileName(path);
+            var match = NameRegex.Match(name);
+
+            if (!match.Success)
+            {
+                // TODO - throw custom exception
+                throw new Exception($"File name {name} is not a valid region file name.");
+            }
+
+            X = int.Parse(match.Groups[1].Value);
+            Z = int.Parse(match.Groups[2].Value);
+
+            // Populate the offset list by parsing the file header. Note that the stream and wrapper
+            // are cleaned up when this class is disposed.
             var stream = new FileStream(path, FileMode.Open, FileAccess.Read);
             wrapper = new StreamWrapper(stream);
 
@@ -33,6 +52,10 @@ namespace MineMap.Lib.Files
         }
 
 
+        public int X { get; private set; }
+        public int Z { get; private set; }
+
+
         public bool HasChunk(ChunkPoint pos)
         {
             var offset = GetOffset(pos);
@@ -41,7 +64,23 @@ namespace MineMap.Lib.Files
         }
 
 
-        public Stream GetChunkStream(ChunkPoint pos)
+        public Chunk GetChunk(ChunkPoint pos)
+        {
+            return Chunk.LoadFrom(GetChunkStream(pos));
+        }
+
+
+        public void Dispose()
+        {
+            if (wrapper != null)
+            {
+                wrapper.Dispose();
+                wrapper = null;
+            }
+        }
+
+
+        private Stream GetChunkStream(ChunkPoint pos)
         {
             var offset = GetOffset(pos);
 
@@ -81,16 +120,6 @@ namespace MineMap.Lib.Files
             {
                 // TODO - custom exception
                 throw new Exception($"Chunk {pos} has invalid compression type: {compressionType}.");
-            }
-        }
-
-
-        public void Dispose()
-        {
-            if (wrapper != null)
-            {
-                wrapper.Dispose();
-                wrapper = null;
             }
         }
 

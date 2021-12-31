@@ -4,10 +4,9 @@
 using System;
 using System.IO;
 
+using MineMap.Cli.Helpers;
 using MineMap.Cli.Options;
-using MineMap.Lib.Chunks;
 using MineMap.Lib.Files;
-using MineMap.Lib.Nbt;
 using MineMap.Lib.Util;
 
 namespace MineMap.Cli.Commands
@@ -17,25 +16,10 @@ namespace MineMap.Cli.Commands
         public void Run(DumpChunkOptions options)
         {
             // Set up the world, which will be used to find the region file.
-            // TODO - extract this out to a common place, and use here and in DumpRegionCommand
-            World world = null;
-            if (!string.IsNullOrEmpty(options.WorldDir))
-            {
-                world = World.FromDirectory(options.WorldDir);
-            }
-            else if (!string.IsNullOrEmpty(options.WorldName))
-            {
-                world = World.FromName(options.WorldName);
-            }
-            else
-            {
-                // TODO - throw a custom exception and catch it in Program, to properly set the exit status.
-                Console.WriteLine("You must specify either a world directory or a world name.");
-                return;
-            }
+            var world = options.GetWorld();
 
             // Determine the region containing the chunk, and get the path to the region
-            var chunkPoint = new ChunkPoint(options.X, options.Y, options.Z);
+            var chunkPoint = new ChunkPoint(options.X, options.Z);
             var regionPoint = chunkPoint.ToRegion();
             var regionPath = world.GetRegionPath(regionPoint);
 
@@ -55,20 +39,13 @@ namespace MineMap.Cli.Commands
                     return;
                 }
 
-                using (var chunkStream = region.GetChunkStream(chunkPoint))
-                using (var wrapper = new StreamWrapper(chunkStream))
-                using (var reader = new NbtReader(wrapper))
-                {
-                    var rootTag = reader.ReadTag().AsCompound();
+                var chunk = region.GetChunk(chunkPoint);
 
-                    var chunk = Chunk.LoadFrom(rootTag);
+                Console.WriteLine("Chunk ({0},{1},{2}):", chunk.X, chunk.Y, chunk.Z);
+                Console.WriteLine("   Inhabited Time: {0}", chunk.InhabitedTime);
 
-                    // TODO - dump some info
-                }
+                // TODO - dump more info
             }
-
-            // TODO
-            Console.WriteLine("Dump chunk is not yet implemented!");
         }
     }
 }

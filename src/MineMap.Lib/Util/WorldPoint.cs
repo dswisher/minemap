@@ -20,7 +20,7 @@ namespace MineMap.Lib.Util
 
         public ChunkPoint ToChunk()
         {
-            return new ChunkPoint(X / 16, Y / 16, Z / 16);
+            return new ChunkPoint(X / 16, Z / 16);
         }
 
 
