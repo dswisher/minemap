@@ -16,5 +16,8 @@ namespace MineMap.Cli.Options
 
         [Option("output", Default = "time-map.png", HelpText = "The path of the image file to create.")]
         public string OutputPath { get; set; }
+
+        [Option("chunk-size", Default = 2, HelpText = "The width and height of a chunk, in pixels.")]
+        public int ChunkSize { get; set; }
     }
 }

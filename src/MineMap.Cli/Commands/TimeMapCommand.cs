@@ -64,10 +64,10 @@ namespace MineMap.Cli.Commands
             var transform = new Transform2D();
 
             transform.InputRange(matrix.MinX, matrix.MaxX, matrix.MinY, matrix.MaxY);
-            transform.OutputRange(0, dx, 0, dy);
+            transform.OutputRange(0, dx - 1, 0, dy - 1);
 
             // Use the data to create the image
-            using (var image = new Image<Rgba32>(dx + 1, dy + 1))
+            using (var image = new Image<Rgba32>(dx * options.ChunkSize, dy * options.ChunkSize))
             {
                 for (var x = matrix.MinX; x < matrix.MaxX; x++)
                 {
@@ -86,10 +86,16 @@ namespace MineMap.Cli.Commands
                             color = colorMap.GetColor(val);
                         }
 
-                        var px = (int)transform.TransformX(x);
-                        var py = (int)transform.TransformY(y);
+                        var px = options.ChunkSize * (int)transform.TransformX(x);
+                        var py = options.ChunkSize * (int)transform.TransformY(y);
 
-                        image[px, py] = color;
+                        for (var xx = 0; xx < options.ChunkSize; xx++)
+                        {
+                            for (var yy = 0; yy < options.ChunkSize; yy++)
+                            {
+                                image[px + xx, py + yy] = color;
+                            }
+                        }
                     }
                 }
 
