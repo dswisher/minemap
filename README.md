@@ -13,6 +13,7 @@ Generate map images from Minecraft world files. Currently only supports the Java
 * Data Values: [Java Edition](https://minecraft.gamepedia.com/Java_Edition_data_values)
 * Articles: [Clockwork Codex](http://clockworkcodex.blogspot.com/2011/06/minecraft-mapping-reading-minecraft.html)
 * Tools: [Dinnerbone Coords](https://dinnerbone.com/minecraft/tools/coordinates/)
+* Colors: [Kenneth Moreland](https://www.kennethmoreland.com/color-advice/)
 
 
 ## Dependencies

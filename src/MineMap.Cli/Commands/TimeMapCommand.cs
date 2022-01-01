@@ -6,7 +6,11 @@ using System;
 using MineMap.Cli.Helpers;
 using MineMap.Cli.Options;
 using MineMap.Lib.Files;
+using MineMap.Lib.Graphics;
 using MineMap.Lib.Util;
+
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace MineMap.Cli.Commands
 {
@@ -21,6 +25,7 @@ namespace MineMap.Cli.Commands
             // to store the inhabited times for each chunk. While that is being populated, the histogram
             // is also created.
             var matrix = new Sparse2DMatrix<int, int, long>();
+            var colorMap = new ColorMap();
 
             foreach (var regionPath in world.ListRegionPaths())
             {
@@ -44,7 +49,7 @@ namespace MineMap.Cli.Commands
 
                             matrix[pt.X, pt.Z] = time;
 
-                            // TODO - add to the gradient
+                            colorMap.AddSample(time);
                         }
                     }
                 }
@@ -52,9 +57,46 @@ namespace MineMap.Cli.Commands
                 Console.WriteLine("   {0} chunks", found);
             }
 
+            // Set up the transformation from chunk coords to pixel coords
+            var dx = matrix.MaxX - matrix.MinX;
+            var dy = matrix.MaxY - matrix.MinY;
+
+            var transform = new Transform2D();
+
+            transform.InputRange(matrix.MinX, matrix.MaxX, matrix.MinY, matrix.MaxY);
+            transform.OutputRange(0, dx, 0, dy);
+
             // Use the data to create the image
-            // TODO - create the image
-            Console.WriteLine("TimeMap is not yet implemented!");
+            using (var image = new Image<Rgba32>(dx + 1, dy + 1))
+            {
+                for (var x = matrix.MinX; x < matrix.MaxX; x++)
+                {
+                    for (var y = matrix.MinY; y < matrix.MaxY; y++)
+                    {
+                        var val = matrix[x, y];
+
+                        var black = new Rgba32(0, 0, 0, 255);
+                        Rgba32 color;
+                        if (val == 0)
+                        {
+                            color = black;
+                        }
+                        else
+                        {
+                            color = colorMap.GetColor(val);
+                        }
+
+                        var px = (int)transform.TransformX(x);
+                        var py = (int)transform.TransformY(y);
+
+                        image[px, py] = color;
+                    }
+                }
+
+                image.SaveAsPng(options.OutputPath);
+            }
+
+            Console.WriteLine("Wrote image to {0}.", options.OutputPath);
         }
     }
 }

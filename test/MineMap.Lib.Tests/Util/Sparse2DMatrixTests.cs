@@ -41,5 +41,20 @@ namespace MineMap.Lib.Tests.Util
 
             matrix[4, 4].Should().Be(0);
         }
+
+
+        [Fact]
+        public void ExtentsAreSet()
+        {
+            // Arrange
+            matrix[-3, -5] = 1;
+            matrix[2, 4] = 2;
+
+            // Act and assert
+            matrix.MinX.Should().Be(-3);
+            matrix.MaxX.Should().Be(2);
+            matrix.MinY.Should().Be(-5);
+            matrix.MaxY.Should().Be(4);
+        }
     }
 }

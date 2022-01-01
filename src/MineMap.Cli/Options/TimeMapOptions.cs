@@ -13,5 +13,8 @@ namespace MineMap.Cli.Options
 
         [Option("world-dir", HelpText = "The directory containing the world in which to find the region.")]
         public string WorldDir { get; set; }
+
+        [Option("output", Default = "time-map.png", HelpText = "The path of the image file to create.")]
+        public string OutputPath { get; set; }
     }
 }
