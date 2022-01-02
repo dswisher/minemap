@@ -19,7 +19,7 @@ namespace MineMap.Cli.Commands
             var world = options.GetWorld();
 
             // Determine the region containing the chunk, and get the path to the region
-            var chunkPoint = new ChunkPoint(options.X, options.Z);
+            var chunkPoint = new Coordinate2D(options.X, options.Z, CoordinateType2D.Chunk);
             var regionPoint = chunkPoint.ToRegion();
             var regionPath = world.GetRegionPath(regionPoint);
 

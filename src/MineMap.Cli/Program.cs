@@ -16,11 +16,12 @@ namespace MineMap.Cli
         {
             try
             {
-                var parsedArgs = Parser.Default.ParseArguments<DumpChunkOptions, DumpRegionOptions, TimeMapOptions>(args);
+                var parsedArgs = Parser.Default.ParseArguments<DumpChunkOptions, DumpRegionOptions, HeightMapOptions, TimeMapOptions>(args);
 
                 // Process each verb separately, because that's the way the library seems to work...is there a better way?
                 parsedArgs.WithParsed<DumpChunkOptions>(options => new DumpChunkCommand().Run(options));
                 parsedArgs.WithParsed<DumpRegionOptions>(options => new DumpRegionCommand().Run(options));
+                parsedArgs.WithParsed<HeightMapOptions>(options => new HeightMapCommand().Run(options));
                 parsedArgs.WithParsed<TimeMapOptions>(options => new TimeMapCommand().Run(options));
             }
             catch (CliException ex)

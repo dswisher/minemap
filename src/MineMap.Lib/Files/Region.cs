@@ -56,7 +56,7 @@ namespace MineMap.Lib.Files
         public int Z { get; private set; }
 
 
-        public bool HasChunk(ChunkPoint pos)
+        public bool HasChunk(Coordinate2D pos)
         {
             var offset = GetOffset(pos);
 
@@ -64,7 +64,7 @@ namespace MineMap.Lib.Files
         }
 
 
-        public Chunk GetChunk(ChunkPoint pos)
+        public Chunk GetChunk(Coordinate2D pos)
         {
             return Chunk.LoadFrom(GetChunkStream(pos));
         }
@@ -80,7 +80,7 @@ namespace MineMap.Lib.Files
         }
 
 
-        private Stream GetChunkStream(ChunkPoint pos)
+        private Stream GetChunkStream(Coordinate2D pos)
         {
             var offset = GetOffset(pos);
 
@@ -124,10 +124,9 @@ namespace MineMap.Lib.Files
         }
 
 
-        private int GetOffset(ChunkPoint pos)
+        private int GetOffset(Coordinate2D input)
         {
-            // TODO - convert coordinate to chunk coords
-
+            var pos = input.ToChunk();
             var indexPos = (pos.X & 0x1f) + ((pos.Z & 0x1f) * 32);
 
             return offsets[indexPos];

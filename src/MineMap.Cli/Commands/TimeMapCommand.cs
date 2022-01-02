@@ -38,7 +38,8 @@ namespace MineMap.Cli.Commands
                 {
                     for (var z = 0; z < 32; z++)
                     {
-                        var pt = new ChunkPoint((region.X * 32) + x, (region.Z * 32) + z);
+                        // TODO - xyzzy - do proper unit conversions - Coordinate2D class should do this work
+                        var pt = new Coordinate2D((region.X * 32) + x, (region.Z * 32) + z, CoordinateType2D.Chunk);
 
                         if (region.HasChunk(pt))
                         {
@@ -100,9 +101,8 @@ namespace MineMap.Cli.Commands
                 }
 
                 image.SaveAsPng(options.OutputPath);
+                Console.WriteLine("Wrote image to {0}.", options.OutputPath);
             }
-
-            Console.WriteLine("Wrote image to {0}.", options.OutputPath);
         }
     }
 }

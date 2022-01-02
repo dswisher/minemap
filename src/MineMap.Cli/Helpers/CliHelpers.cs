@@ -1,9 +1,13 @@
 // Copyright (c) Doug Swisher. All Rights Reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
+using System.Collections.Generic;
+using System.Linq;
+
 using MineMap.Cli.Exceptions;
 using MineMap.Cli.Options;
 using MineMap.Lib.Files;
+using MineMap.Lib.Util;
 
 namespace MineMap.Cli.Helpers
 {
@@ -27,6 +31,13 @@ namespace MineMap.Cli.Helpers
             }
 
             return world;
+        }
+
+
+        public static IEnumerable<Coordinate2D> GetRegionsInRect(this IBlockRectOptions options)
+        {
+            // TODO - implement GetRegionsInRect
+            return Enumerable.Empty<Coordinate2D>();
         }
     }
 }

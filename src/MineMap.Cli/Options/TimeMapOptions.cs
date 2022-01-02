@@ -8,10 +8,10 @@ namespace MineMap.Cli.Options
     [Verb("time-map", HelpText = "Create a map that shows inhabited time for each chunk using a gradient.")]
     public class TimeMapOptions : IWorldOptions
     {
-        [Option("world", HelpText = "The name of the world in which to find the region.")]
+        [Option("world", HelpText = "The name of the world to use.")]
         public string WorldName { get; set; }
 
-        [Option("world-dir", HelpText = "The directory containing the world in which to find the region.")]
+        [Option("world-dir", HelpText = "The directory containing the world to use.")]
         public string WorldDir { get; set; }
 
         [Option("output", Default = "time-map.png", HelpText = "The path of the image file to create.")]

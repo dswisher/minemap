@@ -37,8 +37,9 @@ namespace MineMap.Lib.Files
         }
 
 
-        public string GetRegionPath(RegionPoint pt)
+        public string GetRegionPath(Coordinate2D input)
         {
+            var pt = input.ToRegion();
             return Path.Join(worldRoot.FullName, "region", $"r.{pt.X}.{pt.Z}.mca");
         }
 

@@ -19,7 +19,7 @@ namespace MineMap.Cli.Commands
             var world = options.GetWorld();
 
             // Get the path to the region file
-            var pt = new RegionPoint(options.X, options.Z);
+            var pt = new Coordinate2D(options.X, options.Z, CoordinateType2D.Region);
 
             var regionPath = world.GetRegionPath(pt);
 
@@ -54,7 +54,8 @@ namespace MineMap.Cli.Commands
 
                 for (var x = 0; x < 32; x++)
                 {
-                    var pt = new ChunkPoint(x, z);
+                    // TODO - xyzzy - Type should be RegionChunk or ChunkRegion, not just Chunk
+                    var pt = new Coordinate2D(x, z, CoordinateType2D.Chunk);
 
                     if (region.HasChunk(pt))
                     {
