@@ -18,6 +18,11 @@ namespace MineMap.Lib.Util
         Chunk,
 
         /// <summary>
+        /// The coordinates of a chunk within its owning region
+        /// </summary>
+        ChunkWithinRegion,
+
+        /// <summary>
         /// The coordinates of a region
         /// </summary>
         Region
@@ -78,6 +83,23 @@ namespace MineMap.Lib.Util
         }
 
 
+        public Coordinate2D ToChunk(Coordinate2D regionPt)
+        {
+            if (Type == CoordinateType2D.Chunk)
+            {
+                return this;
+            }
+            else if ((Type == CoordinateType2D.ChunkWithinRegion) && (regionPt.Type == CoordinateType2D.Region))
+            {
+                return new Coordinate2D((regionPt.X * 32) + X, (regionPt.Z * 32) + Z, CoordinateType2D.Chunk);
+            }
+            else
+            {
+                throw new CoordinateConversionException(Type, CoordinateType2D.Chunk);
+            }
+        }
+
+
         public Coordinate2D ToRegion()
         {
             if (Type == CoordinateType2D.Region)
@@ -95,6 +117,27 @@ namespace MineMap.Lib.Util
             else
             {
                 throw new CoordinateConversionException(Type, CoordinateType2D.Region);
+            }
+        }
+
+
+        public Coordinate2D ToChunkWithinRegion()
+        {
+            if (Type == CoordinateType2D.ChunkWithinRegion)
+            {
+                return this;
+            }
+            else if (Type == CoordinateType2D.Chunk)
+            {
+                return new Coordinate2D(X & 0x1f, Z & 0x1f, CoordinateType2D.ChunkWithinRegion);
+            }
+            else if (Type == CoordinateType2D.Block)
+            {
+                return new Coordinate2D((X >> 4) & 0x1f, (Z >> 4) & 0x1f, CoordinateType2D.Chunk);
+            }
+            else
+            {
+                throw new CoordinateConversionException(Type, CoordinateType2D.ChunkWithinRegion);
             }
         }
     }

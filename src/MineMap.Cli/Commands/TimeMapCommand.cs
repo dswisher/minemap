@@ -31,6 +31,9 @@ namespace MineMap.Cli.Commands
             {
                 var region = new Region(regionPath);
 
+                // TODO - region should expose a Coordinate2D, not separate X and Z values
+                var regionPt = new Coordinate2D(region.X, region.Z, CoordinateType2D.Region);
+
                 Console.WriteLine("Region {0}, X={1}, Z={2}:", regionPath, region.X, region.Z);
 
                 var found = 0;
@@ -38,8 +41,7 @@ namespace MineMap.Cli.Commands
                 {
                     for (var z = 0; z < 32; z++)
                     {
-                        // TODO - xyzzy - do proper unit conversions - Coordinate2D class should do this work
-                        var pt = new Coordinate2D((region.X * 32) + x, (region.Z * 32) + z, CoordinateType2D.Chunk);
+                        var pt = new Coordinate2D(x, z, CoordinateType2D.ChunkWithinRegion).ToChunk(regionPt);
 
                         if (region.HasChunk(pt))
                         {

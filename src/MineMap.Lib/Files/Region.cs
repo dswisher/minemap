@@ -126,8 +126,8 @@ namespace MineMap.Lib.Files
 
         private int GetOffset(Coordinate2D input)
         {
-            var pos = input.ToChunk();
-            var indexPos = (pos.X & 0x1f) + ((pos.Z & 0x1f) * 32);
+            var pos = input.ToChunkWithinRegion();
+            var indexPos = pos.X + (pos.Z * 32);
 
             return offsets[indexPos];
         }

@@ -16,12 +16,14 @@ namespace MineMap.Lib.Tests.Util
         public static IEnumerable<object[]> BadConversions()
         {
             yield return new object[] { (Action)(() => new Coordinate2D(CoordinateType2D.Region).ToChunk()) };
+            yield return new object[] { (Action)(() => new Coordinate2D(CoordinateType2D.Region).ToChunkWithinRegion()) };
         }
 
 
         public static IEnumerable<object[]> IdentityConversions()
         {
             yield return new object[] { CoordinateType2D.Chunk, (Func<Coordinate2D, Coordinate2D>)(x => x.ToChunk()) };
+            yield return new object[] { CoordinateType2D.ChunkWithinRegion, (Func<Coordinate2D, Coordinate2D>)(x => x.ToChunkWithinRegion()) };
             yield return new object[] { CoordinateType2D.Region, (Func<Coordinate2D, Coordinate2D>)(x => x.ToRegion()) };
         }
 
@@ -138,6 +140,25 @@ namespace MineMap.Lib.Tests.Util
             region.X.Should().Be(rx);
             region.Z.Should().Be(rz);
             region.Type.Should().Be(CoordinateType2D.Region);
+        }
+
+
+        [Theory]
+        [InlineData(4, 8, 4, 8)]
+        [InlineData(33, 34, 1, 2)]
+        [InlineData(-1, -2, 31, 30)]
+        public void CanConvertChunkToChunkWithinRegion(int cx, int cz, int cix, int ciz)
+        {
+            // Arrange
+            var block = new Coordinate2D(cx, cz, CoordinateType2D.Chunk);
+
+            // Act
+            var region = block.ToChunkWithinRegion();
+
+            // Assert
+            region.X.Should().Be(cix);
+            region.Z.Should().Be(ciz);
+            region.Type.Should().Be(CoordinateType2D.ChunkWithinRegion);
         }
 
 

@@ -54,8 +54,7 @@ namespace MineMap.Cli.Commands
 
                 for (var x = 0; x < 32; x++)
                 {
-                    // TODO - xyzzy - Type should be RegionChunk or ChunkRegion, not just Chunk
-                    var pt = new Coordinate2D(x, z, CoordinateType2D.Chunk);
+                    var pt = new Coordinate2D(x, z, CoordinateType2D.ChunkWithinRegion);
 
                     if (region.HasChunk(pt))
                     {
